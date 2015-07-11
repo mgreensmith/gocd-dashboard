@@ -9,17 +9,14 @@ body {
 }
 
 .btn {
-    margin: 3px;
-    padding: 5px;
+    margin: 1px;
+    padding: 0px;
     font-size: 30px;
     font-weight: 900;
+    display: block;
+    width: 100%;
 }
 
-.ul {
-    margin: 0px;
-    padding: 0px;
-    border: 0px;
-}
 
 
 
