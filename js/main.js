@@ -6,7 +6,6 @@ BUILD_STATE_BUTTON_CLASSES = {
 
 function buildGroup(group) {
   $.each( group.pipelines, function(i , val) {
-
     btn_class = BUILD_STATE_BUTTON_CLASSES[val.instances[0].latest_stage_state];
     link = 'http://' + query.server + '/go/tab/pipeline/history/' + val.name;
     $( "#badges" ).append('<li class="col-xs-6"><a href="' + link + '" target="_blank" class="btn btn-lg ' + btn_class + '">' + val.name + '</button></li>')
@@ -25,15 +24,34 @@ function queryParse(querystring) {
 }
 
 query = queryParse( window.location.search );
-server = query.server ? query.server : config.server;
+server = query.server ? _.trim(query.server, '/' ) : _.trim(config.server, '/' );
 group = query.group ? _.trim(query.group, '/' ) : config.group ? config.group : null;
+url = server + "/go/dashboard.json"
 
-$.getJSON( server + "/go/dashboard.json", function( data ) {
+$.ajax({
+  dataType: "json",
+  url: url,
+  timeout: 2000
+}).done(function( data ) {
   if ( group ) {
-    buildGroup( _.find(data, { 'name': group } ));
+    group_object = _.find(data, { 'name': group } )
+    if ( typeof group_object !== 'undefined' ) {
+      buildGroup( group_object );
+    } else {
+      error_html = "Pipeline group '" + group + "' was not found in the data returned from " + url
+      $( '#error-text' ).html( error_html );
+      $( '#error-panel' ).toggle();
+    }
   } else {
     $.each( data, function(i , val) {
       buildGroup(val);
     });
   };
+}).fail(function( jqxhr, textStatus, error ) {
+  error_html = "Unable to fetch data from " + url
+  if ( error ) {
+    error_html = error_html + "<br>Error: " + error
+  }
+    $( '#error-text' ).html( error_html );
+    $( '#error-panel' ).toggle();
 });
