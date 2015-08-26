@@ -24,23 +24,16 @@ function queryParse(querystring) {
   return result;
 }
 
-var query = queryParse( window.location.search );
+query = queryParse( window.location.search );
+server = query.server ? query.server : config.server;
+group = query.group ? _.trim(query.group, '/' ) : config.group ? config.group : null;
 
-if ( query.server ) {
-
-  $.getJSON( "http://" + query.server + "/go/dashboard.json", function( data ) {
-
-    //var query = queryParse( window.location.search );
-
-    if ( query.group ) {
-      buildGroup( _.find(data, { 'name': _.trim(query.group, '/' ) } ));
-    } else {
-      $.each( data, function(i , val) {
-        buildGroup(val);
-      });
-    };
-  });
-
-} else {
-  $('#usage').toggle();
-}
+$.getJSON( server + "/go/dashboard.json", function( data ) {
+  if ( group ) {
+    buildGroup( _.find(data, { 'name': group } ));
+  } else {
+    $.each( data, function(i , val) {
+      buildGroup(val);
+    });
+  };
+});
