@@ -12,9 +12,9 @@ This is a very minimal visualizer for [GoCD](http://go.cd) pipeline status. It c
 Default configuration values are sourced from `js/config.js`.
 
 - `server`: URL to your GoCD server
-- `group`: optional pipeline group name to display. Empty string will cause all available pipelines to be displayed.
+- `pipeline_groups`: [optional] comma-separated list of pipeline groups to display
 
-Configuration values can be overriden at run time via URL query parameters, e.g. `http://gocd-wallboard/?server=http://my.gocdserver.com&group=somegroup`
+Configuration values can be overriden at run time via URL query parameters, e.g. `http://gocd-wallboard/?server=http://my.gocdserver.com&pipeline_groups=somegroup`
 
 ### Copyright
 

@@ -29,9 +29,17 @@ function queryParse(querystring) {
 }
 
 query = queryParse( window.location.search );
+
 server = query.server ? _.trim(query.server, '/' ) : _.trim(config.server, '/' );
-group = query.group ? _.trim(query.group, '/' ) : config.group ? config.group : null;
 url = server + "/go/dashboard.json"
+
+if ( query.pipeline_groups ) {
+  pipeline_groups =  _.trim(query.pipeline_groups, '/' )
+} else {
+  pipeline_groups = config.pipeline_groups ? config.pipeline_groups : null
+}
+
+groups = pipeline_groups !== null ? pipeline_groups.split(',') : null
 
 pipeline_group_template = Handlebars.compile( $("#pipeline-group-template").html() );
 pipeline_badge_template = Handlebars.compile( $("#pipeline-badge-template").html() );
@@ -41,15 +49,17 @@ $.ajax({
   url: url,
   timeout: 2000
 }).done(function( data ) {
-  if ( group ) {
-    group_object = _.find(data, { 'name': group } )
-    if ( typeof group_object !== 'undefined' ) {
-      buildGroup( group_object );
-    } else {
-      error_html = "Pipeline group '" + group + "' was not found in the data returned from " + url
-      $( '#error-text' ).html( error_html );
-      $( '#error-panel' ).toggle();
-    }
+  if ( groups !== undefined && groups !== null ) {
+    $.each( groups, function(i , group) {
+      group_object = _.find(data, { 'name': group } )
+      if ( typeof group_object !== 'undefined' ) {
+        buildGroup( group_object );
+      } else {
+        error_html = "Pipeline group '" + group + "' was not found in the data returned from " + url
+        $( '#error-text' ).html( error_html );
+        $( '#error-panel' ).toggle();
+      }
+    });
   } else {
     $.each( data, function(i , val) {
       buildGroup(val);
