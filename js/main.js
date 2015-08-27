@@ -28,6 +28,11 @@ function queryParse(querystring) {
   return result;
 }
 
+function showError( html ) {
+  $( '#error-text' ).append( html + '<br>');
+  $( '#error-panel' ).show();
+}
+
 query = queryParse( window.location.search );
 
 server = query.server ? _.trim(query.server, '/' ) : _.trim(config.server, '/' );
@@ -55,9 +60,7 @@ $.ajax({
       if ( typeof group_object !== 'undefined' ) {
         buildGroup( group_object );
       } else {
-        error_html = "Pipeline group '" + group + "' was not found in the data returned from " + url
-        $( '#error-text' ).html( error_html );
-        $( '#error-panel' ).toggle();
+        showError( "Pipeline group '" + group + "' was not found in the data returned from " + url );
       }
     });
   } else {
@@ -70,6 +73,5 @@ $.ajax({
   if ( error ) {
     error_html = error_html + "<br>Error: " + error
   }
-    $( '#error-text' ).html( error_html );
-    $( '#error-panel' ).toggle();
+  showError( error_html );
 });
