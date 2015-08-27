@@ -22,14 +22,21 @@
           <div class="panel-body" id="error-text"></div>
         </div>
       </div>
-      <div id="pipeline-groups">
-        <ul class="list-unstyled" id="badges"></ul>
-      </div>
+      <div class="container-fluid" id="pipeline-groups"></div>
 
       <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
       <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
       <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
       <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.min.js"></script>
+
+      <script id="pipeline-group-template" type="text/x-handlebars-template">
+        <div class="row">
+          <div class="container">
+            <h2 class="text-center">{{name}}</h2>
+          </div>
+          <ul class="list-unstyled" id="pipeline-group-{{name}}"></ul>
+        </div>
+      </script>
 
       <script id="pipeline-badge-template" type="text/x-handlebars-template">
         <li class="col-xs-6">

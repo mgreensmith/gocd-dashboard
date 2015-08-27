@@ -2,6 +2,10 @@ body {
   background: url('../img/background.png');
 }
 
+h2 {
+  color: white;
+}
+
 .btn {
     margin: 1px;
     padding: 0px;

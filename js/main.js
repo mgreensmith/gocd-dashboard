@@ -5,11 +5,15 @@ BUILD_STATE_BUTTON_CLASSES = {
   }
 
 function buildGroup(group) {
-  $.each( group.pipelines, function(i , val) {
-    btn_class = BUILD_STATE_BUTTON_CLASSES[val.instances[0].latest_stage_state];
-    link = server + '/go/tab/pipeline/history/' + val.name;
-    pipeline_details = { name: val.name, link: link, btn_class: btn_class }
-    $( "#badges" ).append( pipeline_badge_template( pipeline_details ))
+  $( "#pipeline-groups" ).append( pipeline_group_template( { name: group.name } ))
+
+  $.each( group.pipelines, function(i , pipeline) {
+    pipeline_details = {
+      name: pipeline.name,
+      link: server + '/go/tab/pipeline/history/' + pipeline.name,
+      btn_class: BUILD_STATE_BUTTON_CLASSES[pipeline.instances[0].latest_stage_state]
+    }
+    $( "#pipeline-group-" + group.name ).append( pipeline_badge_template( pipeline_details ))
   });
 }
 
@@ -29,6 +33,7 @@ server = query.server ? _.trim(query.server, '/' ) : _.trim(config.server, '/' )
 group = query.group ? _.trim(query.group, '/' ) : config.group ? config.group : null;
 url = server + "/go/dashboard.json"
 
+pipeline_group_template = Handlebars.compile( $("#pipeline-group-template").html() );
 pipeline_badge_template = Handlebars.compile( $("#pipeline-badge-template").html() );
 
 $.ajax({
