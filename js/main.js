@@ -7,7 +7,7 @@ BUILD_STATE_BUTTON_CLASSES = {
 function buildGroup(group) {
   $.each( group.pipelines, function(i , val) {
     btn_class = BUILD_STATE_BUTTON_CLASSES[val.instances[0].latest_stage_state];
-    link = 'http://' + query.server + '/go/tab/pipeline/history/' + val.name;
+    link = server + '/go/tab/pipeline/history/' + val.name;
     $( "#badges" ).append('<li class="col-xs-6"><a href="' + link + '" target="_blank" class="btn btn-lg ' + btn_class + '">' + val.name + '</button></li>')
   });
 }
