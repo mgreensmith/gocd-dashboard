@@ -1,0 +1,237 @@
+[
+  {
+    "name": "sample-group",
+    "pipelines": [
+      {
+        "name": "single-stage-passing",
+        "can_administer": true,
+        "settings_path": "/go/admin/pipelines/single-stage-passing/general",
+        "is_locked": false,
+        "instances": [
+          {
+            "has_history": "true",
+            "label": "1",
+            "scheduled_time": 1441773308005,
+            "history_path": "/go/tab/pipeline/history/single-stage-passing",
+            "vsm_path": "/go/pipelines/value_stream_map/single-stage-passing/1",
+            "compare_path": "/go/compare/single-stage-passing/0/with/1",
+            "build_cause_path": "/go/pipelines/single-stage-passing/1/build_cause",
+            "triggered_by": "anonymous",
+            "latest_stage_name": "defaultStage",
+            "latest_stage_state": "Passed",
+            "stages": [
+              {
+                "name": "defaultStage",
+                "status": "Passed",
+                "details_path": "/go/pipelines/single-stage-passing/1/defaultStage/1"
+              }
+            ]
+          }
+        ],
+        "available_operations": [
+          {
+            "operation": "trigger",
+            "operation_path": "/go/api/pipelines/single-stage-passing/schedule"
+          },
+          {
+            "operation": "trigger_with_options",
+            "operation_path": "/go/pipelines/show_for_trigger"
+          },
+          {
+            "operation": "pause",
+            "operation_path": "/go/api/pipelines/single-stage-passing/pause"
+          }
+        ],
+        "pause_info": {
+          "is_paused": false
+        }
+      },
+      {
+        "name": "single-stage-failing",
+        "can_administer": true,
+        "settings_path": "/go/admin/pipelines/single-stage-failing/general",
+        "is_locked": false,
+        "instances": [
+          {
+            "has_history": "true",
+            "label": "1",
+            "scheduled_time": 1441773308013,
+            "history_path": "/go/tab/pipeline/history/single-stage-failing",
+            "vsm_path": "/go/pipelines/value_stream_map/single-stage-failing/1",
+            "compare_path": "/go/compare/single-stage-failing/0/with/1",
+            "build_cause_path": "/go/pipelines/single-stage-failing/1/build_cause",
+            "triggered_by": "anonymous",
+            "latest_stage_name": "defaultStage",
+            "latest_stage_state": "Failed",
+            "stages": [
+              {
+                "name": "defaultStage",
+                "status": "Failed",
+                "details_path": "/go/pipelines/single-stage-failing/1/defaultStage/1"
+              }
+            ]
+          }
+        ],
+        "available_operations": [
+          {
+            "operation": "trigger",
+            "operation_path": "/go/api/pipelines/single-stage-failing/schedule"
+          },
+          {
+            "operation": "trigger_with_options",
+            "operation_path": "/go/pipelines/show_for_trigger"
+          },
+          {
+            "operation": "pause",
+            "operation_path": "/go/api/pipelines/single-stage-failing/pause"
+          }
+        ],
+        "pause_info": {
+          "is_paused": false
+        }
+      },
+      {
+        "name": "single-stage-building",
+        "can_administer": true,
+        "settings_path": "/go/admin/pipelines/single-stage-building/general",
+        "is_locked": false,
+        "instances": [
+          {
+            "has_history": "true",
+            "label": "1",
+            "scheduled_time": 1441773918079,
+            "history_path": "/go/tab/pipeline/history/single-stage-building",
+            "vsm_path": "/go/pipelines/value_stream_map/single-stage-building/1",
+            "compare_path": "/go/compare/single-stage-building/0/with/1",
+            "build_cause_path": "/go/pipelines/single-stage-building/1/build_cause",
+            "triggered_by": "changes",
+            "latest_stage_name": "defaultStage",
+            "latest_stage_state": "Building",
+            "stages": [
+              {
+                "name": "defaultStage",
+                "status": "Building",
+                "details_path": "/go/pipelines/single-stage-building/1/defaultStage/1"
+              }
+            ]
+          }
+        ],
+        "available_operations": [
+          {
+            "operation": "trigger",
+            "operation_path": "/go/api/pipelines/single-stage-building/schedule"
+          },
+          {
+            "operation": "trigger_with_options",
+            "operation_path": "/go/pipelines/show_for_trigger"
+          },
+          {
+            "operation": "pause",
+            "operation_path": "/go/api/pipelines/single-stage-building/pause"
+          }
+        ],
+        "pause_info": {
+          "is_paused": false
+        }
+      },
+      {
+        "name": "multi-stage-passing",
+        "can_administer": true,
+        "settings_path": "/go/admin/pipelines/multi-stage-passing/general",
+        "is_locked": false,
+        "instances": [
+          {
+            "has_history": "true",
+            "label": "1",
+            "scheduled_time": 1441773307996,
+            "history_path": "/go/tab/pipeline/history/multi-stage-passing",
+            "vsm_path": "/go/pipelines/value_stream_map/multi-stage-passing/1",
+            "compare_path": "/go/compare/multi-stage-passing/0/with/1",
+            "build_cause_path": "/go/pipelines/multi-stage-passing/1/build_cause",
+            "triggered_by": "changes",
+            "latest_stage_name": "secondStage",
+            "latest_stage_state": "Passed",
+            "stages": [
+              {
+                "name": "firstStage",
+                "status": "Passed",
+                "details_path": "/go/pipelines/multi-stage-passing/1/firstStage/1"
+              },
+              {
+                "name": "secondStage",
+                "status": "Passed",
+                "details_path": "/go/pipelines/multi-stage-passing/1/secondStage/1"
+              }
+            ]
+          }
+        ],
+        "available_operations": [
+          {
+            "operation": "trigger",
+            "operation_path": "/go/api/pipelines/multi-stage-passing/schedule"
+          },
+          {
+            "operation": "trigger_with_options",
+            "operation_path": "/go/pipelines/show_for_trigger"
+          },
+          {
+            "operation": "pause",
+            "operation_path": "/go/api/pipelines/multi-stage-passing/pause"
+          }
+        ],
+        "pause_info": {
+          "is_paused": false
+        }
+      },
+      {
+        "name": "multi-stage-failing",
+        "can_administer": true,
+        "settings_path": "/go/admin/pipelines/multi-stage-failing/general",
+        "is_locked": false,
+        "instances": [
+          {
+            "has_history": "true",
+            "label": "1",
+            "scheduled_time": 1441773307986,
+            "history_path": "/go/tab/pipeline/history/multi-stage-failing",
+            "vsm_path": "/go/pipelines/value_stream_map/multi-stage-failing/1",
+            "compare_path": "/go/compare/multi-stage-failing/0/with/1",
+            "build_cause_path": "/go/pipelines/multi-stage-failing/1/build_cause",
+            "triggered_by": "changes",
+            "latest_stage_name": "secondStage",
+            "latest_stage_state": "Failed",
+            "stages": [
+              {
+                "name": "firstStage",
+                "status": "Passed",
+                "details_path": "/go/pipelines/multi-stage-failing/1/firstStage/1"
+              },
+              {
+                "name": "secondStage",
+                "status": "Failed",
+                "details_path": "/go/pipelines/multi-stage-failing/1/secondStage/1"
+              }
+            ]
+          }
+        ],
+        "available_operations": [
+          {
+            "operation": "trigger",
+            "operation_path": "/go/api/pipelines/multi-stage-failing/schedule"
+          },
+          {
+            "operation": "trigger_with_options",
+            "operation_path": "/go/pipelines/show_for_trigger"
+          },
+          {
+            "operation": "pause",
+            "operation_path": "/go/api/pipelines/multi-stage-failing/pause"
+          }
+        ],
+        "pause_info": {
+          "is_paused": false
+        }
+      }
+    ]
+  }
+]
