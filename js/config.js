@@ -1,4 +1,4 @@
 var config = {
-  server: 'http://localhost',
-  group: ''
+  server: 'http://localhost:8000',
+  pipeline_groups: ''
 };
