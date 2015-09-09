@@ -1,4 +1,4 @@
-[
+ [
   {
     "name": "sample-group",
     "pipelines": [
@@ -230,6 +230,78 @@
         ],
         "pause_info": {
           "is_paused": false
+        }
+      },
+      {
+        "name": "single-stage-unbuilt",
+        "can_administer": true,
+        "settings_path": "/go/admin/pipelines/single-stage-unbuilt/general",
+        "is_locked": false,
+        "instances": [
+          {
+            "has_history": "false"
+          }
+        ],
+        "available_operations": [
+          {
+            "operation": "trigger",
+            "operation_path": "/go/api/pipelines/single-stage-unbuilt/schedule"
+          },
+          {
+            "operation": "trigger_with_options",
+            "operation_path": "/go/pipelines/show_for_trigger"
+          },
+          {
+            "operation": "pause",
+            "operation_path": "/go/api/pipelines/single-stage-unbuilt/pause"
+          }
+        ],
+        "pause_info": {
+          "is_paused": false
+        }
+      },
+      {
+        "name": "single-stage-paused",
+        "can_administer": true,
+        "settings_path": "/go/admin/pipelines/single-stage-passing/general",
+        "is_locked": false,
+        "instances": [
+          {
+            "has_history": "true",
+            "label": "1",
+            "scheduled_time": 1441773308005,
+            "history_path": "/go/tab/pipeline/history/single-stage-passing",
+            "vsm_path": "/go/pipelines/value_stream_map/single-stage-passing/1",
+            "compare_path": "/go/compare/single-stage-passing/0/with/1",
+            "build_cause_path": "/go/pipelines/single-stage-passing/1/build_cause",
+            "triggered_by": "anonymous",
+            "latest_stage_name": "defaultStage",
+            "latest_stage_state": "Passed",
+            "stages": [
+              {
+                "name": "defaultStage",
+                "status": "Passed",
+                "details_path": "/go/pipelines/single-stage-passing/1/defaultStage/1"
+              }
+            ]
+          }
+        ],
+        "available_operations": [
+          {
+            "operation": "trigger",
+            "operation_path": "/go/api/pipelines/single-stage-passing/schedule"
+          },
+          {
+            "operation": "trigger_with_options",
+            "operation_path": "/go/pipelines/show_for_trigger"
+          },
+          {
+            "operation": "pause",
+            "operation_path": "/go/api/pipelines/single-stage-passing/pause"
+          }
+        ],
+        "pause_info": {
+          "is_paused": true
         }
       }
     ]
