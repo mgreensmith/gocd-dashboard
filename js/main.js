@@ -1,7 +1,7 @@
-BUILD_STATE_BUTTON_CLASSES = {
-  'Passed': 'btn-success',
-  'Building': 'btn-warning',
-  'Failed': 'btn-danger'
+BUILD_STATE_CLASSES = {
+  'Passed': 'build-passed',
+  'Building': 'build-building',
+  'Failed': 'build-failed'
   }
 
 function buildGroup(group) {
@@ -11,7 +11,7 @@ function buildGroup(group) {
     pipeline_details = {
       name: pipeline.name,
       link: server + '/go/tab/pipeline/history/' + pipeline.name,
-      btn_class: BUILD_STATE_BUTTON_CLASSES[pipeline.instances[0].latest_stage_state]
+      badge_class: BUILD_STATE_CLASSES[pipeline.instances[0].latest_stage_state] || 'build-none'
     }
     $( "#pipeline-group-" + group.name ).append( pipeline_badge_template( pipeline_details ))
   });

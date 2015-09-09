@@ -40,7 +40,9 @@
 
       <script id="pipeline-badge-template" type="text/x-handlebars-template">
         <li class="col-xs-6">
-          <a href="{{link}}" target="_blank" class="btn btn-lg {{btn_class}}">{{name}}</a>
+          <div class="pipeline-badge {{badge_class}}">
+            <a href="{{link}}" target="_blank">{{name}}</a>
+          </div>
         </li>
       </script>
 

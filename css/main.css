@@ -1,16 +1,26 @@
+
 body {
   background: url('../img/background.png');
 }
 
-h2 {
+h2, a, a:link, a:hover, a:visited, a:active, a:focus {
   color: white;
+  font-weight: 900;
+  font-size: 30px;
+  text-decoration: none;
 }
 
-.btn {
-    margin: 1px;
-    padding: 0px;
-    font-size: 30px;
-    font-weight: 900;
-    display: block;
-    width: 100%;
+
+.pipeline-badge {
+  margin: 1px;
+  padding: 0px;
+  display: block;
+  width: 100%;
+  border-radius: 5px;
+  text-align: center;
 }
+
+.build-passed { background-color: darkgreen;}
+.build-failed { background-color: darkred;}
+.build-building { background-color: #f59400;}
+.build-none { background-color: gray;}
