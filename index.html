@@ -40,8 +40,21 @@
 
       <script id="pipeline-badge-template" type="text/x-handlebars-template">
         <li class="col-md-6">
-          <div class="pipeline-badge {{badge_class}}">
-            <a href="{{link}}" target="_blank">{{name}}</a>
+          <div class="container-fluid pipeline-badge {{badge_class}}">
+            <div class="row">
+              <div class="col-xs-2 multistage-state">
+                {{#if multistage}}
+                {{#each stage_status_classes}}
+                <div class="dot {{this}}"></div>
+                {{/each}}
+                {{/if}}
+              </div>
+              <div class="col-xs-8 text-center">
+                <a href="{{link}}" target="_blank">{{name}}</a>
+              </div>
+              <div class="col-xs-2"></div>
+
+            </div>
           </div>
         </li>
       </script>

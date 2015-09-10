@@ -8,9 +8,15 @@ function buildGroup(group) {
   $( "#pipeline-groups" ).append( pipeline_group_template( { name: group.name } ))
 
   $.each( group.pipelines, function(i , pipeline) {
+    if ( pipeline.instances[0] ) {
+      stage_states = _.pluck(pipeline.instances[0].stages, 'status')
+      stage_state_classes = stage_states.map(function(a) {return BUILD_STATE_CLASSES[a]});
+    }
     pipeline_details = {
       name: pipeline.name,
       link: server + '/go/tab/pipeline/history/' + pipeline.name,
+      multistage: stage_state_classes.length > 1,
+      stage_status_classes: stage_state_classes,
       badge_class: BUILD_STATE_CLASSES[pipeline.instances[0].latest_stage_state] || 'build-none'
     }
     $( "#pipeline-group-" + group.name ).append( pipeline_badge_template( pipeline_details ))
