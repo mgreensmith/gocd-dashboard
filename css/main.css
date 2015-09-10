@@ -3,7 +3,7 @@ body {
   background: url('../img/background.png');
 }
 
-h2, a, a:link, a:hover, a:visited, a:active, a:focus {
+h2, a, a:link, a:hover, a:visited, a:active, a:focus, span {
   color: white;
   font-weight: 900;
   font-size: 30px;

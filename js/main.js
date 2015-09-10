@@ -16,10 +16,13 @@ function buildGroup(group) {
       name: pipeline.name,
       link: server + '/go/tab/pipeline/history/' + pipeline.name,
       multistage: stage_state_classes.length > 1,
+      paused: pipeline.pause_info.is_paused,
       stage_status_classes: stage_state_classes,
       badge_class: BUILD_STATE_CLASSES[pipeline.instances[0].latest_stage_state] || 'build-none'
     }
-    $( "#pipeline-group-" + group.name ).append( pipeline_badge_template( pipeline_details ))
+    if ( !pipeline.pause_info.is_paused || !config.hide_paused_pipelines ) {
+      $( "#pipeline-group-" + group.name ).append( pipeline_badge_template( pipeline_details ))
+    }
   });
 }
 
