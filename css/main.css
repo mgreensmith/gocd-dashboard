@@ -14,10 +14,12 @@ h2, a, a:link, a:hover, a:visited, a:active, a:focus, span {
   margin: 1px;
   padding: 0px;
   border-radius: 5px;
+  white-space: nowrap;
+  text-align: center;
 }
 
-.multistage-state {
-  white-space:nowrap;
+.iblock {
+  display: inline-block;
 }
 
 .dot {
@@ -29,7 +31,7 @@ h2, a, a:link, a:hover, a:visited, a:active, a:focus, span {
   border-radius: 50%;
   border-color: white;
   margin: 11px 0 0 3px;
-  display: inline-block;
+  display: inline-block
 }
 
 .build-passed { background-color: darkgreen;}

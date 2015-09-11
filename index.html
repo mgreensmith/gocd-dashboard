@@ -40,24 +40,20 @@
 
       <script id="pipeline-badge-template" type="text/x-handlebars-template">
         <li class="col-md-6">
-          <div class="container-fluid pipeline-badge {{badge_class}}">
-            <div class="row">
-              <div class="col-xs-2 multistage-state">
-                {{#if multistage}}
-                {{#each stage_status_classes}}
-                <div class="dot {{this}}"></div>
-                {{/each}}
-                {{/if}}
-              </div>
-              <div class="col-xs-8 text-center">
+          <div class="pipeline-badge {{badge_class}}">
+            {{#if multistage}}
+            <div class="pull-left iblock">
+              {{#each stage_status_classes}}
+              <div class="dot {{this}}"></div>
+              {{/each}}
+            </div>
+            {{/if}}
+              <div class="iblock">
                 <a href="{{link}}" target="_blank">{{name}}</a>
               </div>
-              <div class="col-xs-2">
-                {{#if paused}}
-                <span class="glyphicon glyphicon-pause pull-right" aria-hidden="true"></span>
-                {{/if}}
-              </div>
-
+              {{#if paused}}
+              <span class="glyphicon glyphicon-pause iblock pull-right" aria-hidden="true"></span>
+              {{/if}}
             </div>
           </div>
         </li>
