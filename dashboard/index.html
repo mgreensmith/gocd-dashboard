@@ -1,0 +1,71 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>GoCD Wallboard</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <meta http-equiv="refresh" content="300" />
+
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+    </head>
+    <body>
+      <div class="container-fluid">
+        <div class="panel panel-warning" id="error-panel" style="display: none">
+          <div class="panel-heading">Error</div>
+          <div class="panel-body" id="error-text"></div>
+        </div>
+        <div class="row">
+          <div class="col-md-4"></div>
+          <div class="col-md-8" id="pipeline-groups"></div>
+        </div>
+      </div>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+      <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.min.js"></script>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+
+      <script id="pipeline-group-template" type="text/x-handlebars-template">
+        <table class="table small table-condensed">
+          <thead><tr><th colspan="6">{{name}}</th></tr></thead>
+          <tbody id="pipeline-group-{{name}}"></tbody>
+        </table>
+      </script>
+
+      <script id="pipeline-badge-template" type="text/x-handlebars-template">
+        <tr>
+          <td><a href="{{instances.[0].history_path}}">{{name}}</a>{{#if pause_info.is_paused}} <span class="label label-default">paused</span>{{/if}}</td>
+          <td>
+            {{#each instances.[0].stages}}
+             <a href="{{details_path}}"><span class="label {{status_label_class}}">{{name}}</span></a>&nbsp;
+            {{/each}}
+          </td>
+          <td>
+            <a href="{{instances.[0].label}}">#{{instances.[0].label}}</a> triggered by {{instances.[0].triggered_by}} {{reldate instances.[0].scheduled_time}}
+          </td>
+          <td>
+            <a href="{{instances.[0].compare_path}}" title="Compare"><span class="glyphicon glyphicon-sound-stereo" aria-hidden="true"></span></a>
+          </td>
+          <td>
+            <a href="{{instances.[0].build_cause_path}}" class="hover-tooltip" data-id="{{instances.[0].build_cause_path}}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+            </td>
+          <td>
+            {{#if pause_info.is_paused}}
+              <a href="{{available_operations.[2].operation_path}}"><span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span></a>
+            {{else}}
+              <a href="{{available_operations.[0].operation_path}}"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a>
+              <a href="{{available_operations.[2].operation_path}}"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></a>
+            {{/if}}
+          </td>
+        </tr>
+      </script>
+
+      <script src="../js/config.js"></script>
+      <script src="../js/dashboard.js"></script>
+    </body>
+</html>
