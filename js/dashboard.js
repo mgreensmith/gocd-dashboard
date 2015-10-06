@@ -12,13 +12,44 @@ BUILD_STATE_TEXT_CLASSES = {
   'Cancelled': 'text-default'
 }
 
+function loadPipelineData( reloading ) {
+  $.ajax({
+    dataType: "json",
+    url: dashboardUrl,
+    timeout: 2000
+  }).done(function(data) {
+    $.each(data, function(i, val) {
+      if ( reloading ) {
+        reloadPipelineGroup(val);
+      } else {
+        populatePipelineGroup(val);
+      }
+    });
+
+    loadTooltips();
+
+  }).fail(function(jqxhr, textStatus, error) {
+    error_html = "Unable to fetch data from " + url
+    if (error) {
+      error_html = error_html + "<br>Error: " + error
+    }
+    showError(error_html);
+  });
+}
+
 function populatePipelineGroup(group) {
   $("#pipeline-groups").append(pipeline_group_template({
     name: group.name
   }))
   $.each(group.pipelines, function(i, pipeline) {
 
-    $("#pipeline-group-" + group.name).append(pipeline_badge_template(pipelineData(pipeline)))
+    $("#pipeline-group-" + group.name).append("<tr id='" + pipeline.name + "-pipeline'>" + pipeline_badge_template(pipelineData(pipeline)) + "</tr>")
+  });
+}
+
+function reloadPipelineGroup(group) {
+  $.each(group.pipelines, function(i, pipeline) {
+    $("#" + pipeline.name + '-pipeline').html(pipeline_badge_template(pipelineData(pipeline)))
   });
 }
 
@@ -98,9 +129,16 @@ function showPauseModal(name, url) {
 
 function pausePipeline(url, cause) {
   $('#pause-modal').modal('hide');
-  $.post( url, { pauseCause: cause })
+  $.post( server + url, { pauseCause: cause })
     .done(function( data ) {
-      alert("paused!")
+      loadPipelineData( true );
+    });
+}
+
+function unpausePipeline(url) {
+  $.post( server + url )
+    .done(function( data ) {
+      loadPipelineData( true );
     });
 }
 
@@ -114,36 +152,5 @@ Handlebars.registerHelper('reldate', function(epoch) {
 query = queryParse(window.location.search);
 server = query.server ? _.trim(query.server, '/') : _.trim(config.server, '/');
 dashboardUrl = server + "/go/dashboard.json";
-groups = getGroups(query)
 
-$.ajax({
-  dataType: "json",
-  url: dashboardUrl,
-  timeout: 2000
-}).done(function(data) {
-  if (groups !== undefined && groups !== null) {
-    $.each(groups, function(i, group) {
-      group_object = _.find(data, {
-        'name': group
-      })
-      if (typeof group_object !== 'undefined') {
-        populatePipelineGroup(group_object);
-      } else {
-        showError("Pipeline group '" + group + "' was not found in the data returned from " + url);
-      }
-    });
-  } else {
-    $.each(data, function(i, val) {
-      populatePipelineGroup(val);
-    });
-  };
-
-  loadTooltips();
-
-}).fail(function(jqxhr, textStatus, error) {
-  error_html = "Unable to fetch data from " + url
-  if (error) {
-    error_html = error_html + "<br>Error: " + error
-  }
-  showError(error_html);
-});
+loadPipelineData( false );

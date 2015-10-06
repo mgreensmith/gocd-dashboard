@@ -66,31 +66,29 @@
       </script>
 
       <script id="pipeline-badge-template" type="text/x-handlebars-template">
-        <tr>
-          <td><a href="{{instances.[0].history_path}}" target="_blank">{{name}}</a>{{#if pause_info.is_paused}} <span class="label label-default">paused</span>{{/if}}</td>
-          <td>
-            {{#each instances.[0].stages}}
-             <a href="{{details_path}}" target="_blank"><span class="label {{status_label_class}}">{{name}}</span></a>&nbsp;
-            {{/each}}
+        <td><a href="{{instances.[0].history_path}}" target="_blank">{{name}}</a>{{#if pause_info.is_paused}} <span class="label label-default">paused</span>{{/if}}</td>
+        <td>
+          {{#each instances.[0].stages}}
+           <a href="{{details_path}}" target="_blank"><span class="label {{status_label_class}}">{{name}}</span></a>&nbsp;
+          {{/each}}
+        </td>
+        <td>
+          <a href="{{instances.[0].vsm_path}}" target="_blank">#{{instances.[0].label}}</a> triggered by {{instances.[0].triggered_by}} {{reldate instances.[0].scheduled_time}}
+        </td>
+        <td>
+          <a href="{{instances.[0].compare_path}}" title="Compare" target="_blank"><span class="glyphicon glyphicon-sound-stereo" aria-hidden="true"></span></a>
+        </td>
+        <td>
+          <a class="hover-tooltip" data-url="{{instances.[0].build_cause_path}}" target="_blank"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
           </td>
-          <td>
-            <a href="{{instances.[0].vsm_path}}" target="_blank">#{{instances.[0].label}}</a> triggered by {{instances.[0].triggered_by}} {{reldate instances.[0].scheduled_time}}
-          </td>
-          <td>
-            <a href="{{instances.[0].compare_path}}" title="Compare" target="_blank"><span class="glyphicon glyphicon-sound-stereo" aria-hidden="true"></span></a>
-          </td>
-          <td>
-            <a class="hover-tooltip" data-url="{{instances.[0].build_cause_path}}" target="_blank"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
-            </td>
-          <td>
-            {{#if pause_info.is_paused}}
-              <a href="{{available_operations.[2].operation_path}}"><span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span></a>
-            {{else}}
-              <a href="javascript:;" onclick="schedulePipeline('{{available_operations.[0].operation_path}}');"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a>
-              <a href="javascript:;" onclick="showPauseModal('{{name}}', 'http://ci.int.cozy.co{{available_operations.[2].operation_path}}');"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></a>
-            {{/if}}
-          </td>
-        </tr>
+        <td>
+          {{#if pause_info.is_paused}}
+            <a href="javascript:;" onclick="unpausePipeline('{{available_operations.[2].operation_path}}');"><span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span></a>
+          {{else}}
+            <a href="javascript:;" onclick="schedulePipeline('{{available_operations.[0].operation_path}}');"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a>
+            <a href="javascript:;" onclick="showPauseModal('{{name}}', '{{available_operations.[2].operation_path}}');"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></a>
+          {{/if}}
+        </td>
       </script>
 
       <script src="../js/config.js"></script>
