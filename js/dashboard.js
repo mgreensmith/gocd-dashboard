@@ -44,11 +44,6 @@ function showError( html ) {
   $( '#error-panel' ).show();
 }
 
-function dashboardUrl(query) {
-  server = query.server ? _.trim(query.server, '/' ) : _.trim(config.server, '/' );
-  return server + "/go/dashboard.json";
-}
-
 function getGroups(query) {
   if ( query.pipeline_groups ) {
     pipeline_groups =  _.trim(query.pipeline_groups, '/' )
@@ -62,22 +57,22 @@ function getGroups(query) {
 function hoverGetData(){
     var element = $(this);
 
-    var id = element.data('id');
+    var url = element.data('url');
 
-    if(id in cachedData){
-        return cachedData[id];
+    if(url in cachedData){
+        return cachedData[url];
     }
 
     var localData = "error";
 
-    $.ajax(id, {
+    $.ajax(server + url, {
         async: false,
         success: function(data){
             localData = data;
         }
     });
 
-    cachedData[id] = localData;
+    cachedData[url] = localData;
 
     return localData;
 }
@@ -94,13 +89,13 @@ Handlebars.registerHelper('reldate', function(epoch) {
 });
 
 query = queryParse( window.location.search );
+server = query.server ? _.trim(query.server, '/' ) : _.trim(config.server, '/' );
+dashboardUrl = server + "/go/dashboard.json";
 groups = getGroups(query)
-
-
 
 $.ajax({
   dataType: "json",
-  url: dashboardUrl(query),
+  url: dashboardUrl,
   timeout: 2000
 }).done(function( data ) {
   if ( groups !== undefined && groups !== null ) {
@@ -122,6 +117,7 @@ $.ajax({
     title: hoverGetData,
     html: true,
     container: 'body',
+    placement: 'left',
     delay: { "show": 100, "hide": 1500 }
   });
 

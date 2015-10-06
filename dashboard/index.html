@@ -12,6 +12,8 @@
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 
+        <link rel="stylesheet" href="../css/dashboard.css">
+
     </head>
     <body>
       <div class="container-fluid">
@@ -39,20 +41,20 @@
 
       <script id="pipeline-badge-template" type="text/x-handlebars-template">
         <tr>
-          <td><a href="{{instances.[0].history_path}}">{{name}}</a>{{#if pause_info.is_paused}} <span class="label label-default">paused</span>{{/if}}</td>
+          <td><a href="{{instances.[0].history_path}}" target="_blank">{{name}}</a>{{#if pause_info.is_paused}} <span class="label label-default">paused</span>{{/if}}</td>
           <td>
             {{#each instances.[0].stages}}
-             <a href="{{details_path}}"><span class="label {{status_label_class}}">{{name}}</span></a>&nbsp;
+             <a href="{{details_path}}" target="_blank"><span class="label {{status_label_class}}">{{name}}</span></a>&nbsp;
             {{/each}}
           </td>
           <td>
-            <a href="{{instances.[0].label}}">#{{instances.[0].label}}</a> triggered by {{instances.[0].triggered_by}} {{reldate instances.[0].scheduled_time}}
+            <a href="{{instances.[0].label}}" target="_blank">#{{instances.[0].label}}</a> triggered by {{instances.[0].triggered_by}} {{reldate instances.[0].scheduled_time}}
           </td>
           <td>
-            <a href="{{instances.[0].compare_path}}" title="Compare"><span class="glyphicon glyphicon-sound-stereo" aria-hidden="true"></span></a>
+            <a href="{{instances.[0].compare_path}}" title="Compare" target="_blank"><span class="glyphicon glyphicon-sound-stereo" aria-hidden="true"></span></a>
           </td>
           <td>
-            <a href="{{instances.[0].build_cause_path}}" class="hover-tooltip" data-id="{{instances.[0].build_cause_path}}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+            <a class="hover-tooltip" data-url="{{instances.[0].build_cause_path}}" target="_blank"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
             </td>
           <td>
             {{#if pause_info.is_paused}}

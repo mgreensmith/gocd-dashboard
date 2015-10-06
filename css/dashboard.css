@@ -1,3 +1,4 @@
-.popover{
-        max-width:600px;
-    }
+.tooltip-inner {
+  max-width: none;
+  white-space: nowrap;
+}
