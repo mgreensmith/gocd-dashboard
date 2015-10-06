@@ -142,6 +142,13 @@ function unpausePipeline(url) {
     });
 }
 
+function schedulePipeline(url) {
+  $.post( server + url )
+    .done(function( data ) {
+      loadPipelineData( true );
+    });
+}
+
 pipeline_group_template = Handlebars.compile($("#pipeline-group-template").html());
 pipeline_badge_template = Handlebars.compile($("#pipeline-badge-template").html());
 
