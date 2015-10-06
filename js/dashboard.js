@@ -13,6 +13,7 @@ BUILD_STATE_TEXT_CLASSES = {
 }
 
 function loadPipelineData( reloading ) {
+  console.log('reloading....');
   $.ajax({
     dataType: "json",
     url: dashboardUrl,
@@ -54,7 +55,7 @@ function reloadPipelineGroup(group) {
 }
 
 function pipelineData(pipeline) {
-
+  pipeline.is_building = pipeline.instances[0].latest_stage_state == 'Building' ? true : false
   if (pipeline.instances[0]) {
     pipeline.instances[0].latest_stage_state_text_class = BUILD_STATE_TEXT_CLASSES[pipeline.instances[0].latest_stage_state]
     $.each(pipeline.instances[0].stages, function(i, stage) {
@@ -145,19 +146,26 @@ function unpausePipeline(url) {
 function schedulePipeline(url) {
   $.post( server + url )
     .done(function( data ) {
-      loadPipelineData( true );
+      setTimeout(function() {
+        loadPipelineData( true );
+      }, 3000);
     });
 }
 
-pipeline_group_template = Handlebars.compile($("#pipeline-group-template").html());
-pipeline_badge_template = Handlebars.compile($("#pipeline-badge-template").html());
+$(document).ready(function(){
 
-Handlebars.registerHelper('reldate', function(epoch) {
-  return moment(epoch).fromNow();
+  pipeline_group_template = Handlebars.compile($("#pipeline-group-template").html());
+  pipeline_badge_template = Handlebars.compile($("#pipeline-badge-template").html());
+
+  Handlebars.registerHelper('reldate', function(epoch) {
+    return moment(epoch).fromNow();
+  });
+
+  query = queryParse(window.location.search);
+  server = query.server ? _.trim(query.server, '/') : _.trim(config.server, '/');
+  dashboardUrl = server + "/go/dashboard.json";
+
+  loadPipelineData( false );
+  setInterval(function() {loadPipelineData( true ); }, 5000);
+
 });
-
-query = queryParse(window.location.search);
-server = query.server ? _.trim(query.server, '/') : _.trim(config.server, '/');
-dashboardUrl = server + "/go/dashboard.json";
-
-loadPipelineData( false );

@@ -76,17 +76,19 @@
           <a href="{{instances.[0].vsm_path}}" target="_blank">#{{instances.[0].label}}</a> triggered by {{instances.[0].triggered_by}} {{reldate instances.[0].scheduled_time}}
         </td>
         <td>
-          <a href="{{instances.[0].compare_path}}" title="Compare" target="_blank"><span class="glyphicon glyphicon-sound-stereo" aria-hidden="true"></span></a>
+          <a class="glyphicon glyphicon-sound-stereo" href="{{instances.[0].compare_path}}" title="Compare" target="_blank"/>
         </td>
         <td>
-          <a class="hover-tooltip" data-url="{{instances.[0].build_cause_path}}" target="_blank"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+          <a class="hover-tooltip glyphicon glyphicon-edit" data-url="{{instances.[0].build_cause_path}}" target="_blank" />
           </td>
         <td>
           {{#if pause_info.is_paused}}
-            <a href="javascript:;" onclick="unpausePipeline('{{available_operations.[2].operation_path}}');"><span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span></a>
+            <a class="glyphicon glyphicon-step-forward" href="javascript:;" onclick="unpausePipeline('{{available_operations.[2].operation_path}}');" />
           {{else}}
-            <a href="javascript:;" onclick="schedulePipeline('{{available_operations.[0].operation_path}}');"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a>
-            <a href="javascript:;" onclick="showPauseModal('{{name}}', '{{available_operations.[2].operation_path}}');"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></a>
+            {{#unless is_building}}
+            <a class="glyphicon glyphicon-play" href="javascript:;" onclick="schedulePipeline('{{available_operations.[0].operation_path}}');" />
+            {{/unless}}
+            <a class="glyphicon glyphicon-pause" href="javascript:;" onclick="showPauseModal('{{name}}', '{{available_operations.[2].operation_path}}');" />
           {{/if}}
         </td>
       </script>
