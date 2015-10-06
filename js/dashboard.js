@@ -89,7 +89,20 @@ function loadTooltips() {
   });
 }
 
+function showPauseModal(name, url) {
+  $("#pause-modal-title").text("Pause pipeline " + name);
+  $("#pause-modal-form-pausecause").val('');
+  $('#pause-modal-submit-button').attr('onclick', "pausePipeline('" + url + "', $('#pause-modal-form-pausecause').val())")
+  $('#pause-modal').modal('show');
+}
 
+function pausePipeline(url, cause) {
+  $('#pause-modal').modal('hide');
+  $.post( url, { pauseCause: cause })
+    .done(function( data ) {
+      alert("paused!")
+    });
+}
 
 pipeline_group_template = Handlebars.compile($("#pipeline-group-template").html());
 pipeline_badge_template = Handlebars.compile($("#pipeline-badge-template").html());

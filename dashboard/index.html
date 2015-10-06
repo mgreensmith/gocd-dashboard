@@ -26,6 +26,32 @@
           <div class="col-md-8" id="pipeline-groups"></div>
         </div>
       </div>
+
+      <!-- modal -->
+      <div id="pause-modal" class="modal fade">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 id="pause-modal-title" class="modal-title">Pause Pipeline</h4>
+            </div>
+            <div id="pause-modal-body" class="modal-body">
+              <form class="form-horizontal" role="form" onsubmit="return false">
+                <div class="form-group" id="pause-modal-form">
+                  <label for="pause-modal-form-pausecause" class="col-sm-4 control-label">Cause</label>
+                  <div class="col-sm-6">
+                    <input id="pause-modal-form-pausecause" class="form-control">
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button id="pause-modal-submit-button" type="button" class="btn btn-default" type="submit">Pause</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+
       <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
       <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
       <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
@@ -60,8 +86,8 @@
             {{#if pause_info.is_paused}}
               <a href="{{available_operations.[2].operation_path}}"><span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span></a>
             {{else}}
-              <a href="{{available_operations.[0].operation_path}}"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a>
-              <a href="{{available_operations.[2].operation_path}}"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></a>
+              <a href="javascript:;" onclick="schedulePipeline('{{available_operations.[0].operation_path}}');"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a>
+              <a href="javascript:;" onclick="showPauseModal('{{name}}', 'http://ci.int.cozy.co{{available_operations.[2].operation_path}}');"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></a>
             {{/if}}
           </td>
         </tr>
