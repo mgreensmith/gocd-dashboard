@@ -122,7 +122,7 @@ function loadAgentData() {
       }
 
       if ( agent.status == 'Building' ) {
-        agent_hash['build_url'] = server + '/go/tab/build/detail/' + agent.build_locator
+        agent_hash['build_url'] = '/go/tab/build/detail/' + agent.build_locator
         agent_hash['build_name'] = agent.build_locator
         agent_hash['cancel_url'] = cancelUrl( agent.build_locator )
       }
@@ -153,7 +153,7 @@ function hoverGetData() {
   var url = element.data('url');
   var localData = "error";
 
-  $.ajax(server + url, {
+  $.ajax(url, {
     async: false,
     success: function(data) {
       localData = data;
@@ -189,7 +189,7 @@ function pausePipeline(url, cause) {
 }
 
 function postURL(url, params) {
-  $.post( server + url, params)
+  $.post( url, params)
     .done(function( data ) {
       loadPipelineData( true );
       loadJobData();
@@ -218,6 +218,10 @@ $(document).ready(function(){
 
   Handlebars.registerHelper('reldate', function(epoch) {
     return moment(epoch).fromNow();
+  });
+
+  Handlebars.registerHelper('serverUrl', function(url) {
+    return server + url;
   });
 
 
