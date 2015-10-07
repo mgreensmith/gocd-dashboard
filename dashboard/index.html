@@ -22,7 +22,12 @@
           <div class="panel-body" id="error-text"></div>
         </div>
         <div class="row">
-          <div class="col-md-4"></div>
+          <div class="col-md-4">
+            <table class="table small table-condensed">
+              <thead><tr><th>Queued Jobs</th></tr></thead>
+              <tbody id="scheduled-jobs"></tbody>
+            </table>
+          </div>
           <div class="col-md-8" id="pipeline-groups"></div>
         </div>
       </div>
@@ -91,6 +96,10 @@
             <a class="glyphicon glyphicon-pause" href="javascript:;" onclick="showPauseModal('{{name}}', '{{available_operations.[2].operation_path}}');" />
           {{/if}}
         </td>
+      </script>
+
+      <script id="scheduled-job-template" type="text/x-handlebars-template">
+        <tr><td><a href='{{url}}' target="_blank">{{name}}</a></td></tr>
       </script>
 
       <script src="../js/config.js"></script>

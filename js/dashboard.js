@@ -13,7 +13,6 @@ BUILD_STATE_TEXT_CLASSES = {
 }
 
 function loadPipelineData( reloading ) {
-  console.log('reloading....');
   $.ajax({
     dataType: "json",
     url: dashboardUrl,
@@ -64,6 +63,31 @@ function pipelineData(pipeline) {
   }
 
   return pipeline;
+}
+
+
+function loadJobData() {
+
+  $.ajax({
+    dataType: "xml",
+    url: jobsUrl,
+    timeout: 2000
+  }).done(function(data) {
+    $('#scheduled-jobs').html('');
+
+    $(data).find('job').each(function() {
+      url = $(this).find('link').attr('href')
+      name = $(this).find('buildLocator').text();
+      $('#scheduled-jobs').append( scheduled_job_template( { 'name': name, 'url': url}))
+    });
+
+  }).fail(function(jqxhr, textStatus, error) {
+    error_html = "Unable to fetch data from " + url
+    if (error) {
+      error_html = error_html + "<br>Error: " + error
+    }
+    showError(error_html);
+  });
 }
 
 function queryParse(querystring) {
@@ -156,6 +180,7 @@ $(document).ready(function(){
 
   pipeline_group_template = Handlebars.compile($("#pipeline-group-template").html());
   pipeline_badge_template = Handlebars.compile($("#pipeline-badge-template").html());
+  scheduled_job_template = Handlebars.compile($("#scheduled-job-template").html());
 
   Handlebars.registerHelper('reldate', function(epoch) {
     return moment(epoch).fromNow();
@@ -164,8 +189,10 @@ $(document).ready(function(){
   query = queryParse(window.location.search);
   server = query.server ? _.trim(query.server, '/') : _.trim(config.server, '/');
   dashboardUrl = server + "/go/dashboard.json";
+  jobsUrl = server + "/go/api/jobs/scheduled.xml";
 
   loadPipelineData( false );
+  loadJobData( false );
   setInterval(function() {loadPipelineData( true ); }, 5000);
 
 });
