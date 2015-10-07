@@ -185,34 +185,15 @@ function showPauseModal(name, url) {
 
 function pausePipeline(url, cause) {
   $('#pause-modal').modal('hide');
-  $.post( server + url, { pauseCause: cause })
-    .done(function( data ) {
-      loadPipelineData( true );
-    });
+  postURL(url, { pauseCause: cause });
 }
 
-function unpausePipeline(url) {
-  $.post( server + url )
-    .done(function( data ) {
-      loadPipelineData( true );
-    });
-}
-
-function cancelStage(url) {
-  $.post( server + url )
+function postURL(url, params) {
+  $.post( server + url, params)
     .done(function( data ) {
       loadPipelineData( true );
       loadJobData();
       loadAgentData();
-    });
-}
-
-function schedulePipeline(url) {
-  $.post( server + url )
-    .done(function( data ) {
-      setTimeout(function() {
-        loadPipelineData( true );
-      }, 3000);
     });
 }
 
