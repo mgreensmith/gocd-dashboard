@@ -40,11 +40,7 @@ function loadPipelineData( reloading ) {
     attachCollapse();
 
   }).fail(function(jqxhr, textStatus, error) {
-    error_html = "Unable to fetch data from " + url
-    if (error) {
-      error_html = error_html + "<br>Error: " + error
-    }
-    showError(error_html);
+    handleError(error);
   });
 }
 
@@ -104,11 +100,7 @@ function loadJobData() {
     });
 
   }).fail(function(jqxhr, textStatus, error) {
-    error_html = "Unable to fetch data from " + url
-    if (error) {
-      error_html = error_html + "<br>Error: " + error
-    }
-    showError(error_html);
+    handleError(error);
   });
 }
 
@@ -139,11 +131,7 @@ function loadAgentData() {
     });
 
   }).fail(function(jqxhr, textStatus, error) {
-    error_html = "Unable to fetch data from " + url
-    if (error) {
-      error_html = error_html + "<br>Error: " + error
-    }
-    showError(error_html);
+    handleError(error);
   });
 }
 
@@ -158,19 +146,16 @@ function queryParse(querystring) {
   return result;
 }
 
-function showError(html) {
-  $('#error-text').append(html + '<br>');
-  $('#error-panel').show();
-}
+function handleError(error) {
 
-function getGroups(query) {
-  if (query.pipeline_groups) {
-    pipeline_groups = _.trim(query.pipeline_groups, '/')
+  if (error) {
+    error_html = "Error: " + error
   } else {
-    pipeline_groups = config.pipeline_groups ? config.pipeline_groups : null
+    error_html = "An unknown error occurred."
   }
 
-  return pipeline_groups !== null ? pipeline_groups.split(',') : null
+  $('#error-text').html(error_html + '<br>');
+  $('#error-panel').show();
 }
 
 function hoverGetData() {
