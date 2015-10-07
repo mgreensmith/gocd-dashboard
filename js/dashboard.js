@@ -135,17 +135,6 @@ function loadAgentData() {
   });
 }
 
-function queryParse(querystring) {
-  var result = {};
-  (querystring || '').replace(
-    new RegExp("([^?=&]+)(=([^&]*))?", "g"),
-    function($0, $1, $2, $3) {
-      result[$1] = $3 !== undefined ? decodeURIComponent($3) : $3;
-    }
-  );
-  return result;
-}
-
 function handleError(error) {
 
   if (error) {
@@ -250,8 +239,8 @@ $(document).ready(function(){
     return moment(epoch).fromNow();
   });
 
-  query = queryParse(window.location.search);
-  server = query.server ? _.trim(query.server, '/') : _.trim(config.server, '/');
+
+  server = config.server;
   dashboardUrl = server + "/go/dashboard.json";
   jobsUrl = server + "/go/api/jobs/scheduled.xml";
   agentsUrl = server + "/go/api/agents";

@@ -1,66 +1,141 @@
 <!doctype html>
 <html class="no-js" lang="">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>GoCD Wallboard</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <meta http-equiv="refresh" content="300" />
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>GoCD Dashboard</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+  <meta http-equiv="refresh" content="300" />
 
-        <link rel="stylesheet" href="css/common.css">
-        <link rel="stylesheet" href="css/wallboard.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 
-    </head>
-    <body>
-      <div class="container">
-        <div class="panel panel-warning" id="error-panel" style="display: none">
-          <div class="panel-heading">Error</div>
-          <div class="panel-body" id="error-text"></div>
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="panel panel-warning" id="error-panel" style="display: none">
+      <div class="panel-heading">Error</div>
+      <div class="panel-body" id="error-text"></div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <table class="table small table-condensed">
+          <thead>
+            <tr>
+              <th>Agents</th>
+            </tr>
+          </thead>
+          <tbody id="agents"></tbody>
+        </table>
+        <table class="table small table-condensed">
+          <thead>
+            <tr>
+              <th>Queued Jobs</th>
+            </tr>
+          </thead>
+          <tbody id="scheduled-jobs"></tbody>
+        </table>
+      </div>
+      <div class="col-md-8" id="pipeline-groups"></div>
+    </div>
+  </div>
+
+  <!-- modal -->
+  <div id="pause-modal" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 id="pause-modal-title" class="modal-title">Pause Pipeline</h4>
+        </div>
+        <div id="pause-modal-body" class="modal-body">
+          <form class="form-horizontal" role="form" onsubmit="return false">
+            <div class="form-group" id="pause-modal-form">
+              <label for="pause-modal-form-pausecause" class="col-sm-4 control-label">Cause</label>
+              <div class="col-sm-6">
+                <input id="pause-modal-form-pausecause" class="form-control">
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button id="pause-modal-submit-button" type="button" class="btn btn-default" type="submit">Pause</button>
         </div>
       </div>
-      <div class="container-fluid" id="pipeline-groups"></div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
 
-      <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
-      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-      <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-      <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
 
-      <script id="pipeline-group-template" type="text/x-handlebars-template">
-        <div class="row">
-          <div class="container">
-            <h2 class="text-center">{{name}}</h2>
-          </div>
-          <ul class="list-unstyled" id="pipeline-group-{{name}}"></ul>
-        </div>
-      </script>
+  <script id="pipeline-group-template" type="text/x-handlebars-template">
+    <table class="table small table-condensed">
+      <thead>
+        <tr>
+          <th colspan="5">{{name}}</th>
+          <th data-toggle="collapse" data-target="#pipeline-group-{{name}}"><span id="chevron-{{name}}" class="glyphicon glyphicon-chevron-down pull-right"></span>
+          </th>
+        </tr>
+      </thead>
+      <tbody class="collapse in" id="pipeline-group-{{name}}" data-chevron="#chevron-{{name}}"></tbody>
+    </table>
+  </script>
 
-      <script id="pipeline-badge-template" type="text/x-handlebars-template">
-        <li class="col-md-6">
-          <div class="pipeline-badge {{badge_class}}">
-            {{#if multistage}}
-            <div class="pull-left iblock">
-              {{#each stage_status_classes}}
-              <div class="dot {{this}}"></div>
-              {{/each}}
-            </div>
-            {{/if}}
-              <div class="iblock">
-                <a href="{{link}}" target="_blank">{{name}}</a>
-              </div>
-              {{#if paused}}
-              <span class="glyphicon glyphicon-pause iblock pull-right" aria-hidden="true"></span>
-              {{/if}}
-            </div>
-          </div>
-        </li>
-      </script>
+  <script id="pipeline-badge-template" type="text/x-handlebars-template">
+    <td><a href="{{instances.[0].history_path}}" target="_blank">{{name}}</a>{{#if pause_info.is_paused}} <span class="label label-default">paused</span>{{/if}}</td>
+    <td>
+      {{#each instances.[0].stages}}
+      <a href="{{details_path}}" target="_blank"><span class="label {{status_label_class}}">{{name}}</span></a>&nbsp; {{/each}}
+    </td>
+    <td>
+      <a href="{{instances.[0].vsm_path}}" target="_blank">#{{instances.[0].label}}</a> triggered by {{instances.[0].triggered_by}} {{reldate instances.[0].scheduled_time}}
+    </td>
+    <td>
+      <a class="glyphicon glyphicon-sound-stereo" href="{{instances.[0].compare_path}}" title="Compare" target="_blank" />
+    </td>
+    <td>
+      <a class="hover-tooltip glyphicon glyphicon-edit" data-url="{{instances.[0].build_cause_path}}" target="_blank" />
+    </td>
+    <td>
+      {{#if pause_info.is_paused}}
+      <a class="glyphicon glyphicon-step-forward" href="javascript:;" onclick="unpausePipeline('{{available_operations.[2].operation_path}}');" /> {{else}} {{#unless is_building}}
+      <a class="glyphicon glyphicon-play" href="javascript:;" onclick="schedulePipeline('{{available_operations.[0].operation_path}}');" /> {{/unless}}
+      <a class="glyphicon glyphicon-pause" href="javascript:;" onclick="showPauseModal('{{name}}', '{{available_operations.[2].operation_path}}');" /> {{/if}}
+    </td>
+  </script>
 
-      <script src="js/config.js"></script>
-      <script src="js/wallboard.js"></script>
-    </body>
+  <script id="scheduled-job-template" type="text/x-handlebars-template">
+    <tr>
+      <td>
+        <a href='{{url}}' target="_blank">{{name}}</a>
+        <a class="glyphicon glyphicon-remove-circle" href="javascript:;" onclick="cancelStage('{{cancel_url}}');" />
+      </td>
+    </tr>
+  </script>
+
+  <script id="agent-template" type="text/x-handlebars-template">
+    <tr>
+      <td>
+        <strong>{{agent_name}}</strong>
+        <span class="label {{status_label_class}}">{{status}}</span> {{#if build_url}}
+        <a href="{{build_url}}" target="_blank">{{build_name}}</a>
+        <a class="glyphicon glyphicon-remove-circle" href="javascript:;" onclick="cancelStage('{{cancel_url}}');" /> {{/if}}
+      </td>
+    </tr>
+  </script>
+
+  <script src="js/config.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+
 </html>
