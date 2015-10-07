@@ -37,6 +37,7 @@ function loadPipelineData( reloading ) {
     });
 
     loadTooltips();
+    attachCollapse();
 
   }).fail(function(jqxhr, textStatus, error) {
     error_html = "Unable to fetch data from " + url
@@ -122,7 +123,6 @@ function loadAgentData() {
         agent_hash['build_name'] = agent.build_locator
       }
 
-      console.table( agent_hash );
       $('#agents').append( agent_template( agent_hash ));
     });
 
@@ -219,6 +219,18 @@ function schedulePipeline(url) {
         loadPipelineData( true );
       }, 3000);
     });
+}
+
+function attachCollapse() {
+  $('.collapse').on('shown.bs.collapse', function(){
+    chevron = $(this).data('chevron')
+    $(chevron).removeClass("glyphicon-chevron-left").addClass("glyphicon-chevron-down");
+  });
+
+  $('.collapse').on('hidden.bs.collapse', function(){
+    chevron = $(this).data('chevron')
+    $(chevron).removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-left");
+  });
 }
 
 $(document).ready(function(){

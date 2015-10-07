@@ -70,8 +70,8 @@
 
       <script id="pipeline-group-template" type="text/x-handlebars-template">
         <table class="table small table-condensed">
-          <thead><tr><th colspan="6">{{name}}</th></tr></thead>
-          <tbody id="pipeline-group-{{name}}"></tbody>
+          <thead><tr><th colspan="5">{{name}}</th><th data-toggle="collapse" data-target="#pipeline-group-{{name}}"><span id="chevron-{{name}}" class="glyphicon glyphicon-chevron-down pull-right"></span></th></tr></thead>
+          <tbody class="collapse in" id="pipeline-group-{{name}}" data-chevron="#chevron-{{name}}"></tbody>
         </table>
       </script>
 
