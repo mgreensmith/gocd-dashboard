@@ -27,6 +27,11 @@
               <thead><tr><th>Queued Jobs</th></tr></thead>
               <tbody id="scheduled-jobs"></tbody>
             </table>
+
+            <table class="table small table-condensed">
+              <thead><tr><th>Agents</th></tr></thead>
+              <tbody id="agents"></tbody>
+            </table>
           </div>
           <div class="col-md-8" id="pipeline-groups"></div>
         </div>
@@ -100,6 +105,18 @@
 
       <script id="scheduled-job-template" type="text/x-handlebars-template">
         <tr><td><a href='{{url}}' target="_blank">{{name}}</a></td></tr>
+      </script>
+
+      <script id="agent-template" type="text/x-handlebars-template">
+        <tr>
+          <td>
+            <strong>{{agent_name}}</strong>
+            <span class="label {{status_label_class}}">{{status}}</span>
+            {{#if build_url}}
+            <a href="{{build_url}}" target="_blank">{{build_name}}</a>
+            {{/if}}
+          </td>
+        </tr>
       </script>
 
       <script src="../js/config.js"></script>

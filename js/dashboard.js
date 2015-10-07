@@ -12,6 +12,16 @@ BUILD_STATE_TEXT_CLASSES = {
   'Cancelled': 'text-default'
 }
 
+AGENT_STATUS_LABEL_CLASSES = {
+  'Pending': 'label-default',
+  'LostContact': 'label-danger',
+  'Missing': 'label-danger',
+  'Building': 'label-warning',
+  'Cancelled': 'label-primary',
+  'Idle': 'label-primary',
+  'Disabled': 'label-default'
+}
+
 function loadPipelineData( reloading ) {
   $.ajax({
     dataType: "json",
@@ -79,6 +89,41 @@ function loadJobData() {
       url = $(this).find('link').attr('href')
       name = $(this).find('buildLocator').text();
       $('#scheduled-jobs').append( scheduled_job_template( { 'name': name, 'url': url}))
+    });
+
+  }).fail(function(jqxhr, textStatus, error) {
+    error_html = "Unable to fetch data from " + url
+    if (error) {
+      error_html = error_html + "<br>Error: " + error
+    }
+    showError(error_html);
+  });
+}
+
+function loadAgentData() {
+
+  $.ajax({
+    dataType: "json",
+    url: agentsUrl,
+    timeout: 2000
+  }).done(function(data) {
+    $('#agents').html('');
+
+    $.each(data, function(i, agent) {
+
+      agent_hash = {
+        'agent_name': agent.agent_name,
+        'status_label_class': AGENT_STATUS_LABEL_CLASSES[agent.status],
+        'status': agent.status
+      }
+
+      if ( agent.status == 'Building' ) {
+        agent_hash['build_url'] = server + '/go/tab/build/detail/' + agent.build_locator
+        agent_hash['build_name'] = agent.build_locator
+      }
+
+      console.table( agent_hash );
+      $('#agents').append( agent_template( agent_hash ));
     });
 
   }).fail(function(jqxhr, textStatus, error) {
@@ -181,6 +226,7 @@ $(document).ready(function(){
   pipeline_group_template = Handlebars.compile($("#pipeline-group-template").html());
   pipeline_badge_template = Handlebars.compile($("#pipeline-badge-template").html());
   scheduled_job_template = Handlebars.compile($("#scheduled-job-template").html());
+  agent_template = Handlebars.compile($("#agent-template").html());
 
   Handlebars.registerHelper('reldate', function(epoch) {
     return moment(epoch).fromNow();
@@ -190,9 +236,13 @@ $(document).ready(function(){
   server = query.server ? _.trim(query.server, '/') : _.trim(config.server, '/');
   dashboardUrl = server + "/go/dashboard.json";
   jobsUrl = server + "/go/api/jobs/scheduled.xml";
+  agentsUrl = server + "/go/api/agents";
 
   loadPipelineData( false );
-  loadJobData( false );
+  loadAgentData();
+  loadJobData();
   setInterval(function() {loadPipelineData( true ); }, 5000);
+  setInterval(function() {loadAgentData(); }, 5000);
+  setInterval(function() {loadJobData(); }, 5000);
 
 });
