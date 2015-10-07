@@ -104,7 +104,12 @@
       </script>
 
       <script id="scheduled-job-template" type="text/x-handlebars-template">
-        <tr><td><a href='{{url}}' target="_blank">{{name}}</a></td></tr>
+        <tr>
+          <td>
+            <a href='{{url}}' target="_blank">{{name}}</a>
+            <a class="glyphicon glyphicon-remove-circle" href="javascript:;" onclick="cancelStage('{{cancel_url}}');" />
+          </td>
+        </tr>
       </script>
 
       <script id="agent-template" type="text/x-handlebars-template">
@@ -114,6 +119,7 @@
             <span class="label {{status_label_class}}">{{status}}</span>
             {{#if build_url}}
             <a href="{{build_url}}" target="_blank">{{build_name}}</a>
+            <a class="glyphicon glyphicon-remove-circle" href="javascript:;" onclick="cancelStage('{{cancel_url}}');" />
             {{/if}}
           </td>
         </tr>

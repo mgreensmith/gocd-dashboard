@@ -76,6 +76,14 @@ function pipelineData(pipeline) {
   return pipeline;
 }
 
+function cancelUrl( buildLocator ) {
+  // buildLocator: cozy-payments-develop/145/tests/1/rspec
+  parts = buildLocator.split('/');
+
+  // POST /go/api/stages/:pipeline_name/:stage_name/cancel
+  return '/go/api/stages/' + parts[0] + '/' + parts[2] + '/cancel'
+}
+
 
 function loadJobData() {
 
@@ -87,9 +95,12 @@ function loadJobData() {
     $('#scheduled-jobs').html('');
 
     $(data).find('job').each(function() {
-      url = $(this).find('link').attr('href')
-      name = $(this).find('buildLocator').text();
-      $('#scheduled-jobs').append( scheduled_job_template( { 'name': name, 'url': url}))
+      job_hash = {
+        'name': $(this).find('buildLocator').text(),
+        'url': $(this).find('link').attr('href'),
+        'cancel_url': cancelUrl( $(this).find('buildLocator').text() )
+      }
+      $('#scheduled-jobs').append( scheduled_job_template( job_hash ))
     });
 
   }).fail(function(jqxhr, textStatus, error) {
@@ -121,6 +132,7 @@ function loadAgentData() {
       if ( agent.status == 'Building' ) {
         agent_hash['build_url'] = server + '/go/tab/build/detail/' + agent.build_locator
         agent_hash['build_name'] = agent.build_locator
+        agent_hash['cancel_url'] = cancelUrl( agent.build_locator )
       }
 
       $('#agents').append( agent_template( agent_hash ));
@@ -209,6 +221,15 @@ function unpausePipeline(url) {
   $.post( server + url )
     .done(function( data ) {
       loadPipelineData( true );
+    });
+}
+
+function cancelStage(url) {
+  $.post( server + url )
+    .done(function( data ) {
+      loadPipelineData( true );
+      loadJobData();
+      loadAgentData();
     });
 }
 
