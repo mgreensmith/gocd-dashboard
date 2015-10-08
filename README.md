@@ -2,6 +2,22 @@
 
 This is an alternative dashboard for [GoCD](http://go.cd). It mimics the Jenkins dashboard view.
 
+![Screenshot](/screenshot.png?raw=true)
+
+### Features
+
+- Detail view of all pipelines in all groups, groups are collapsible
+- Schedule/pause/unpause any pipeline
+- Detail view of all agents, with build status
+- Cancel any stage that is scheduled or building
+- List of all queued jobs
+- Auto-refreshes all data from server
+
+### Requirements
+
+- GoCD server v15.1 or v15.2 (this project uses the undocumented `/go/dashboard.json` API)
+- A webserver
+
 ### Usage
 
 1. Modify `js/config.js` as necessary.
