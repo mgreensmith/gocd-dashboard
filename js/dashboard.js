@@ -22,10 +22,11 @@ AGENT_STATUS_LABEL_CLASSES = {
   'Disabled': 'label-default'
 }
 
+// Fetch dashboard.json and populate the pipelines table.
 function loadPipelineData( reloading ) {
   $.ajax({
     dataType: "json",
-    url: dashboardUrl,
+    url: server + "/go/dashboard.json",
     timeout: 2000
   }).done(function(data) {
     $.each(data, function(i, val) {
@@ -36,6 +37,7 @@ function loadPipelineData( reloading ) {
       }
     });
 
+    // reattach event listeners to new elements
     loadTooltips();
     attachCollapse();
 
@@ -44,6 +46,7 @@ function loadPipelineData( reloading ) {
   });
 }
 
+// Populate a pipeline group into new rows in the pipelines table
 function populatePipelineGroup(group) {
   $("#pipeline-groups").append(pipeline_group_template({
     name: group.name
@@ -54,12 +57,15 @@ function populatePipelineGroup(group) {
   });
 }
 
+// Reload the existing pipeline table rows with fresh data
 function reloadPipelineGroup(group) {
   $.each(group.pipelines, function(i, pipeline) {
     $("#" + pipeline.name + '-pipeline').html(pipeline_badge_template(pipelineData(pipeline)))
   });
 }
 
+// Accept a pipeline object from the API and add some additional attributes
+// for element classes, returning the embiggened object.
 function pipelineData(pipeline) {
   pipeline.is_building = pipeline.instances[0].latest_stage_state == 'Building' ? true : false
   if (pipeline.instances[0]) {
@@ -72,6 +78,7 @@ function pipelineData(pipeline) {
   return pipeline;
 }
 
+// Given a build-locator string, construct an URL that would cancel that stage
 function cancelUrl( buildLocator ) {
   // buildLocator: cozy-payments-develop/145/tests/1/rspec
   parts = buildLocator.split('/');
@@ -80,12 +87,11 @@ function cancelUrl( buildLocator ) {
   return '/go/api/stages/' + parts[0] + '/' + parts[2] + '/cancel'
 }
 
-
+// Fetch scheduled job data from the API and populate the scheduled jobs table
 function loadJobData() {
-
   $.ajax({
     dataType: "xml",
-    url: jobsUrl,
+    url: server + "/go/api/jobs/scheduled.xml",
     timeout: 2000
   }).done(function(data) {
     $('#scheduled-jobs').html('');
@@ -104,11 +110,11 @@ function loadJobData() {
   });
 }
 
+// Fetch agent data from the agents API, and populate the agents table
 function loadAgentData() {
-
   $.ajax({
     dataType: "json",
-    url: agentsUrl,
+    url: server + "/go/api/agents",
     timeout: 2000
   }).done(function(data) {
     $('#agents').html('');
@@ -138,17 +144,18 @@ function loadAgentData() {
   });
 }
 
+// Given a build-locator, determine the stage instance API url for this stage,
+// fetch data about the current instance, find the time that the build started.
+// Calculate the duration from build-start to now, and return a formatted string.
 function getElapsedBuildTime( buildLocator ) {
   // buildLocator: cozy-payments-develop/145/tests/1/rspec
   parts = buildLocator.split('/');
-
-  var job_name = parts[4];
+  job_name = parts[4];
 
   // /go/api/stages/:pipeline_name/:stage_name/instance/:pipeline_counter/:stage_counter
-
-  var startTime = "unknown";
-
   url = server + '/go/api/stages/' + parts[0] + '/' + parts[2] + '/instance/' + parts[1] + '/' + parts[3]
+
+  startTime = "unknown";
 
   $.ajax(url, {
     async: false,
@@ -171,6 +178,7 @@ function getElapsedBuildTime( buildLocator ) {
   }
 }
 
+// Show an error panel when the API throws an error.
 function handleError(error) {
 
   if (error) {
@@ -183,13 +191,14 @@ function handleError(error) {
   $('#error-panel').show();
 }
 
+// Return the results of an AJAX call to the URL from the 'data-url'
+// attribute of the calling DOM element. Used by hover-tooltip elements.
 function hoverGetData() {
-  var element = $(this);
+  element = $(this);
 
-  var url = element.data('url');
-  var localData = "error";
+  localData = "error";
 
-  $.ajax(url, {
+  $.ajax(element.data('url');, {
     async: false,
     success: function(data) {
       localData = data;
@@ -199,6 +208,7 @@ function hoverGetData() {
   return localData;
 }
 
+// Populate tooltips from the API for all 'hover-tooltip' elements.
 function loadTooltips() {
   $('.hover-tooltip').tooltip({
     title: hoverGetData,
@@ -212,6 +222,7 @@ function loadTooltips() {
   });
 }
 
+// Display the pipeline pause modal and configure its elements
 function showPauseModal(name, url) {
   $("#pause-modal-title").text("Pause pipeline " + name);
   $("#pause-modal-form-pausecause").val('');
@@ -219,11 +230,14 @@ function showPauseModal(name, url) {
   $('#pause-modal').modal('show');
 }
 
+// Handler for the pipeline pause modal button submit action.
 function pausePipeline(url, cause) {
   $('#pause-modal').modal('hide');
   postURL(url, { pauseCause: cause });
 }
 
+// Given an URL and optional parameters, POST to that URL
+// and then reload all dynamic data.
 function postURL(url, params) {
   $.post( url, params)
     .done(function( data ) {
@@ -233,6 +247,7 @@ function postURL(url, params) {
     });
 }
 
+// Attach event handlers to collapsible elements, for maniplulating chevrons
 function attachCollapse() {
   $('.collapse').on('shown.bs.collapse', function(){
     chevron = $(this).data('chevron')
@@ -245,6 +260,7 @@ function attachCollapse() {
   });
 }
 
+// Let's do this thing!
 $(document).ready(function(){
 
   pipeline_group_template = Handlebars.compile($("#pipeline-group-template").html());
@@ -262,9 +278,6 @@ $(document).ready(function(){
 
 
   server = config.server;
-  dashboardUrl = server + "/go/dashboard.json";
-  jobsUrl = server + "/go/api/jobs/scheduled.xml";
-  agentsUrl = server + "/go/api/agents";
 
   loadPipelineData( false );
   loadAgentData();
