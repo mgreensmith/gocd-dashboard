@@ -117,12 +117,15 @@ function loadAgentData() {
 
       agent_hash = {
         'agent_name': agent.agent_name,
+        'agent_ip_address': agent.ip_address,
+        'agent_os': agent.os,
         'status_label_class': AGENT_STATUS_LABEL_CLASSES[agent.status],
         'status': agent.status
       }
 
       if ( agent.status == 'Building' ) {
         agent_hash['build_url'] = '/go/tab/build/detail/' + agent.build_locator
+        agent_hash['build_time'] = getElapsedBuildTime( agent.build_locator )
         agent_hash['build_name'] = agent.build_locator
         agent_hash['cancel_url'] = cancelUrl( agent.build_locator )
       }
@@ -133,6 +136,39 @@ function loadAgentData() {
   }).fail(function(jqxhr, textStatus, error) {
     handleError(error);
   });
+}
+
+function getElapsedBuildTime( buildLocator ) {
+  // buildLocator: cozy-payments-develop/145/tests/1/rspec
+  parts = buildLocator.split('/');
+
+  var job_name = parts[4];
+
+  // /go/api/stages/:pipeline_name/:stage_name/instance/:pipeline_counter/:stage_counter
+
+  var startTime = "unknown";
+
+  url = server + '/go/api/stages/' + parts[0] + '/' + parts[2] + '/instance/' + parts[1] + '/' + parts[3]
+
+  $.ajax(url, {
+    async: false,
+    success: function(data) {
+      $.each(data.jobs, function(i, job) {
+        if ( job.name == job_name ) {
+          if ( job.job_state_transitions[3] ) {
+            startTime = job.job_state_transitions[3].state_change_time; // the 4th transition element is Preparing -> Building transition
+          }
+        }
+      });
+    }
+  });
+
+  if ( startTime != 'unknown' ) {
+    d = moment.duration(moment(Date.now()).diff(startTime));
+    return d.hours() + 'h ' + d.minutes() + 'm ' + d.seconds() + 's';
+  } else {
+    return 'unknown duration'
+  }
 }
 
 function handleError(error) {

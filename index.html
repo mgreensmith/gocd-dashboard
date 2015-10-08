@@ -22,24 +22,28 @@
     </div>
     <div class="row">
       <div class="col-md-4">
-        <table class="table small table-condensed">
+        <h4><strong>GoCD Dashboard</strong></h4>
+        <table class="table table-striped table-condensed">
           <thead>
             <tr>
-              <th>Agents</th>
+              <th colspan="2">Agents</th>
             </tr>
           </thead>
-          <tbody id="agents"></tbody>
+          <tbody id="agents" class="small"></tbody>
         </table>
-        <table class="table small table-condensed">
+        <table class="table table-condensed">
           <thead>
             <tr>
               <th>Queued Jobs</th>
             </tr>
           </thead>
-          <tbody id="scheduled-jobs"></tbody>
+          <tbody id="scheduled-jobs" class="small"></tbody>
         </table>
       </div>
-      <div class="col-md-8" id="pipeline-groups"></div>
+      <div class="col-md-8">
+        <h5><strong>Pipelines</strong></h5>
+        <div id="pipeline-groups"></div>
+      </div>
     </div>
   </div>
 
@@ -129,8 +133,14 @@
   <script id="agent-template" type="text/x-handlebars-template">
     <tr>
       <td>
-        <strong>{{agent_name}}</strong>
-        <span class="label {{status_label_class}}">{{status}}</span>
+        <strong>{{agent_name}} / {{agent_ip_address}} / {{agent_os}}</strong>
+      </td>
+      <td class="text-right">
+        <span class="label {{status_label_class}}">{{status}}{{#if build_url}} for {{build_time}}{{/if}}</span>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
         {{#if build_url}}
         <a href="{{serverUrl build_url}}" target="_blank">{{build_name}}</a>
         <a class="glyphicon glyphicon-remove-circle" href="javascript:;" onclick="postURL('{{serverUrl cancel_url}}');" />
