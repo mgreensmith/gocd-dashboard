@@ -36,13 +36,9 @@ function loadPipelineData( reloading ) {
         populatePipelineGroup(val);
       }
     });
-
     // reattach event listeners to new elements
     loadTooltips();
     attachCollapse();
-
-  }).fail(function(jqxhr, textStatus, error) {
-    handleError(error);
   });
 }
 
@@ -104,9 +100,6 @@ function loadJobData() {
       }
       $('#scheduled-jobs').append( scheduled_job_template( job_hash ))
     });
-
-  }).fail(function(jqxhr, textStatus, error) {
-    handleError(error);
   });
 }
 
@@ -138,9 +131,6 @@ function loadAgentData() {
 
       $('#agents').append( agent_template( agent_hash ));
     });
-
-  }).fail(function(jqxhr, textStatus, error) {
-    handleError(error);
   });
 }
 
@@ -176,19 +166,6 @@ function getElapsedBuildTime( buildLocator ) {
   } else {
     return 'unknown duration'
   }
-}
-
-// Show an error panel when the API throws an error.
-function handleError(error) {
-
-  if (error) {
-    error_html = "Error: " + error
-  } else {
-    error_html = "An unknown error occurred."
-  }
-
-  $('#error-text').html(error_html + '<br>');
-  $('#error-panel').show();
 }
 
 // Return the results of an AJAX call to the URL from the 'data-url'
