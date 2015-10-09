@@ -175,7 +175,7 @@ function hoverGetData() {
 
   localData = "error";
 
-  $.ajax(element.data('url');, {
+  $.ajax(element.data('url'), {
     async: false,
     success: function(data) {
       localData = data;

@@ -1,3 +1,3 @@
 var config = {
-  server: 'http://localhost:8000'
+  server: 'http://ci.int.cozy.co'
 };
