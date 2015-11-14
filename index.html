@@ -22,7 +22,7 @@
         <table class="table table-striped table-condensed">
           <thead>
             <tr>
-              <th colspan="3">Agents</th>
+              <th colspan="2">Agents</th>
             </tr>
           </thead>
           <tbody id="agents" class="small"></tbody>
@@ -135,13 +135,11 @@
         {{#each agent_environments}}
         <span class="label label-info">{{this}}</span>
         {{/each}}
-      </td>
-      <td class="text-right">
         <span class="label {{status_label_class}}">{{status}}{{#if build_url}} for {{build_time}}{{/if}}</span>
       </td>
     </tr>
     <tr>
-      <td colspan="3">
+      <td colspan="2">
         {{#if build_url}}
         <a href="{{serverUrl build_url}}" target="_blank">{{build_name}}</a>
         <a class="glyphicon glyphicon-remove-circle" href="javascript:;" onclick="postURL('{{serverUrl cancel_url}}');" />
