@@ -119,7 +119,8 @@ function loadAgentData() {
         'agent_ip_address': agent.ip_address,
         'agent_os': agent.os,
         'status_label_class': AGENT_STATUS_LABEL_CLASSES[agent.status],
-        'status': agent.status
+        'status': agent.status,
+        'agent_environments': agent.environments
       }
 
       if ( agent.status == 'Building' ) {
