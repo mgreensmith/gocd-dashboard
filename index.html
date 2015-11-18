@@ -110,7 +110,7 @@
       <a class="glyphicon glyphicon-step-forward" href="javascript:;" onclick="postURL('{{serverUrl available_operations.[2].operation_path}}');" />
       {{else}}
       {{#unless is_building}}
-      <a class="glyphicon glyphicon-play" href="javascript:;" onclick="postURL('{{serverUrl available_operations.[0].operation_path}}');" />
+      <a class="glyphicon glyphicon-play" href="javascript:;" onclick="$(this).hide(); postURL('{{serverUrl available_operations.[0].operation_path}}');" />
       {{/unless}}
       <a class="glyphicon glyphicon-pause" href="javascript:;" onclick="showPauseModal('{{name}}', '{{serverUrl available_operations.[2].operation_path}}');" />
       {{/if}}
