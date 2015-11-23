@@ -1,6 +1,7 @@
 BUILD_STATE_LABEL_CLASSES = {
   'Passed': 'label-success',
   'Building': 'label-warning',
+  'Failing': 'label-warning',
   'Failed': 'label-danger',
   'Cancelled': 'label-default'
 }
@@ -8,6 +9,7 @@ BUILD_STATE_LABEL_CLASSES = {
 BUILD_STATE_TEXT_CLASSES = {
   'Passed': 'text-success',
   'Building': 'text-warning',
+  'Failing': 'text-warning',
   'Failed': 'text-danger',
   'Cancelled': 'text-default'
 }
