@@ -91,29 +91,29 @@
   </script>
 
   <script id="pipeline-badge-template" type="text/x-handlebars-template">
-    <td><a href="{{serverUrl instances.[0].history_path}}" target="_blank">{{name}}</a>{{#if pause_info.is_paused}} <span class="label label-default">paused</span>{{/if}}</td>
+    <td><a href="{{serverUrl history_url}}" target="_blank">{{name}}</a>{{#if pause_info.paused}} <span class="label label-default">paused</span>{{/if}}</td>
     <td>
-      {{#each instances.[0].stages}}
-      <a href="{{serverUrl details_path}}" target="_blank"><span class="label {{status_label_class}}">{{name}}</span></a>&nbsp;
+      {{#each _embedded.instances.[0]._embedded.stages}}
+      <a href="{{serverUrl url}}" target="_blank"><span class="label {{status_label_class}}">{{name}}</span></a>&nbsp;
       {{/each}}
     </td>
     <td>
-      <a href="{{serverUrl instances.[0].vsm_path}}" target="_blank">#{{instances.[0].label}}</a> triggered by {{instances.[0].triggered_by}} {{reldate instances.[0].scheduled_time}}
+      <a href="{{_embedded.instances.[0]._links.vsm_url.href}}" target="_blank">#{{_embedded.instances.[0].label}}</a> triggered by {{_embedded.instances.[0].triggered_by}} {{reldate _embedded.instances.[0].schedule_at}}
     </td>
     <td>
-      <a class="glyphicon glyphicon-sound-stereo" href="{{serverUrl instances.[0].compare_path}}" title="Compare" target="_blank" />
+      <a class="glyphicon glyphicon-sound-stereo" href="{{_embedded.instances.[0]._links.compare_url.href}}" title="Compare" target="_blank" />
     </td>
     <td>
-      <a class="hover-tooltip glyphicon glyphicon-edit" data-url="{{serverUrl instances.[0].build_cause_path}}" target="_blank" />
+      <a class="hover-tooltip glyphicon glyphicon-edit" data-url="{{_embedded.instances.[0]._links.build_cause_url.href}}" target="_blank" />
     </td>
     <td>
-      {{#if pause_info.is_paused}}
-      <a class="glyphicon glyphicon-step-forward" href="javascript:;" onclick="postURL('{{serverUrl available_operations.[2].operation_path}}');" />
+      {{#if pause_info.paused}}
+      <a class="glyphicon glyphicon-step-forward" href="javascript:;" onclick="postURL('{{_links.unpause.href}}');" />
       {{else}}
       {{#unless is_building}}
-      <a class="glyphicon glyphicon-play" href="javascript:;" onclick="$(this).hide(); postURL('{{serverUrl available_operations.[0].operation_path}}');" />
+      <a class="glyphicon glyphicon-play" href="javascript:;" onclick="$(this).hide(); postURL('{{_links.trigger.href}}');" />
       {{/unless}}
-      <a class="glyphicon glyphicon-pause" href="javascript:;" onclick="showPauseModal('{{name}}', '{{serverUrl available_operations.[2].operation_path}}');" />
+      <a class="glyphicon glyphicon-pause" href="javascript:;" onclick="showPauseModal('{{name}}', '{{_links.pause.href}}');" />
       {{/if}}
     </td>
   </script>

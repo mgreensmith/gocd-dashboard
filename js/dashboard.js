@@ -28,14 +28,17 @@ AGENT_STATUS_LABEL_CLASSES = {
 function loadPipelineData( reloading ) {
   $.ajax({
     dataType: "json",
-    url: server + "/go/dashboard.json",
-    timeout: 2000
+    url: server + "/go/api/dashboard",
+    timeout: 2000,
+    headers: {
+      Accept : "application/vnd.go.cd.v1+json"
+    }
   }).done(function(data) {
-    $.each(data, function(i, val) {
+    $.each(data._embedded.pipeline_groups, function(i, pipeline_group) {
       if ( reloading ) {
-        reloadPipelineGroup(val);
+        reloadPipelineGroup(pipeline_group);
       } else {
-        populatePipelineGroup(val);
+        populatePipelineGroup(pipeline_group);
       }
     });
     // reattach event listeners to new elements
@@ -49,30 +52,35 @@ function populatePipelineGroup(group) {
   $("#pipeline-groups").append(pipeline_group_template({
     name: group.name
   }))
-  $.each(group.pipelines, function(i, pipeline) {
-
+  $.each(group._embedded.pipelines, function(i, pipeline) {
     $("#pipeline-group-" + group.name).append("<tr id='" + pipeline.name + "-pipeline'>" + pipeline_badge_template(pipelineData(pipeline)) + "</tr>")
   });
 }
 
 // Reload the existing pipeline table rows with fresh data
 function reloadPipelineGroup(group) {
-  $.each(group.pipelines, function(i, pipeline) {
+  $.each(group._embedded.pipelines, function(i, pipeline) {
     $("#" + pipeline.name + '-pipeline').html(pipeline_badge_template(pipelineData(pipeline)))
   });
+}
+
+function stageIsBuilding(element, index, array) {
+  return element.status == 'Building';
 }
 
 // Accept a pipeline object from the API and add some additional attributes
 // for element classes, returning the embiggened object.
 function pipelineData(pipeline) {
-  pipeline.is_building = pipeline.instances[0].latest_stage_state == 'Building' ? true : false
-  if (pipeline.instances[0]) {
-    pipeline.instances[0].latest_stage_state_text_class = BUILD_STATE_TEXT_CLASSES[pipeline.instances[0].latest_stage_state]
-    $.each(pipeline.instances[0].stages, function(i, stage) {
-      pipeline.instances[0].stages[i].status_label_class = BUILD_STATE_LABEL_CLASSES[stage.status]
+  pipeline.is_building = pipeline._embedded.instances[0]._embedded.stages.some(stageIsBuilding);// ? true : false
+  if (pipeline._embedded.instances[0]) {
+    pipeline._embedded.instances[0].latest_stage_state_text_class = BUILD_STATE_TEXT_CLASSES[pipeline._embedded.instances[0]._embedded.stages[0].status]
+    $.each(pipeline._embedded.instances[0]._embedded.stages, function(i, stage) {
+      pipeline._embedded.instances[0]._embedded.stages[i].status_label_class = BUILD_STATE_LABEL_CLASSES[stage.status]
+      // Take the href for the stage which is an API URL, split it on /stages/ and prepend /go/pipelines
+      pipeline._embedded.instances[0]._embedded.stages[i].url = '/go/pipelines/' + pipeline._embedded.instances[0]._embedded.stages[i]._links.self.href.split('/stages/')[1]
     });
   }
-
+  pipeline.history_url = '/go/tab/pipeline/history/' + pipeline.name
   return pipeline;
 }
 
