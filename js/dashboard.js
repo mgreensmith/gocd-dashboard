@@ -71,8 +71,8 @@ function stageIsBuilding(element, index, array) {
 // Accept a pipeline object from the API and add some additional attributes
 // for element classes, returning the embiggened object.
 function pipelineData(pipeline) {
-  pipeline.is_building = pipeline._embedded.instances[0]._embedded.stages.some(stageIsBuilding);// ? true : false
   if (pipeline._embedded.instances[0]) {
+    pipeline.is_building = pipeline._embedded.instances[0]._embedded.stages.some(stageIsBuilding);// ? true : false
     pipeline._embedded.instances[0].latest_stage_state_text_class = BUILD_STATE_TEXT_CLASSES[pipeline._embedded.instances[0]._embedded.stages[0].status]
     $.each(pipeline._embedded.instances[0]._embedded.stages, function(i, stage) {
       pipeline._embedded.instances[0]._embedded.stages[i].status_label_class = BUILD_STATE_LABEL_CLASSES[stage.status]
