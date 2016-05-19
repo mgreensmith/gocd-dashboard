@@ -15,7 +15,7 @@ This is an alternative dashboard for [GoCD](http://go.cd). It mimics the Jenkins
 
 ### Requirements
 
-- GoCD server v15.1 or v15.2 (this project uses the undocumented `/go/dashboard.json` API)
+- GoCD server version `15.3` or newer. (Use branch `pre-15.3-compat` for GoCD version 15.1 or 15.2 compatibility.)
 - A webserver
 
 ### Usage
