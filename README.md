@@ -15,8 +15,14 @@ This is an alternative dashboard for [GoCD](http://go.cd). It mimics the Jenkins
 
 ### Requirements
 
-- GoCD server version `15.3` or newer. (Use branch `pre-15.3-compat` for GoCD version 15.1 or 15.2 compatibility.)
+- GoCD server version `16.7` or newer.
 - A webserver
+
+### Legacy
+
+- GoCD versions 16.3 through 16.6 are untested and may or may not be supported.
+- Use branch `pre-16.3-compat` for compatibility with GoCD versions 15.3 through 16.2.
+- Use branch `pre-15.3-compat` for compatibility with GoCD versions earlier than 15.3.
 
 ### Usage
 
