@@ -24,8 +24,10 @@ AGENT_STATUS_LABEL_CLASSES = {
   'Disabled': 'label-default'
 }
 
+var activeAgents = {};
+
 // Fetch dashboard.json and populate the pipelines table.
-function loadPipelineData( reloading ) {
+function loadPipelineAndAgenData( reloading ) {
   $.ajax({
     dataType: "json",
     url: server + "/go/api/dashboard",
@@ -41,6 +43,9 @@ function loadPipelineData( reloading ) {
         populatePipelineGroup(pipeline_group);
       }
     });
+    // load the agent data after we populate/reload the pipelineGroups
+    // so we know which are currently building
+    loadAgentData();
     // reattach event listeners to new elements
     loadTooltips();
     attachCollapse();
@@ -70,6 +75,8 @@ function stageIsBuilding(element, index, array) {
 
 // Accept a pipeline object from the API and add some additional attributes
 // for element classes, returning the embiggened object.
+// If the pipeline is currently building, store some information about the agent
+// running it and it's build location
 function pipelineData(pipeline) {
   if (pipeline._embedded.instances[0]) {
     pipeline.is_building = pipeline._embedded.instances[0]._embedded.stages.some(stageIsBuilding);// ? true : false
@@ -78,18 +85,45 @@ function pipelineData(pipeline) {
       pipeline._embedded.instances[0]._embedded.stages[i].status_label_class = BUILD_STATE_LABEL_CLASSES[stage.status]
       // Take the href for the stage which is an API URL, split it on /stages/ and prepend /go/pipelines
       pipeline._embedded.instances[0]._embedded.stages[i].url = '/go/pipelines/' + pipeline._embedded.instances[0]._embedded.stages[i]._links.self.href.split('/stages/')[1]
+      if(pipeline.is_building) {
+        storeActiveAgentDetails( pipeline );
+      }
     });
   }
   pipeline.history_url = '/go/tab/pipeline/history/' + pipeline.name
   return pipeline;
 }
 
-// Given a build-locator string, construct an URL that would cancel that stage
-function cancelUrl( buildLocator ) {
-  // buildLocator: cozy-payments-develop/145/tests/1/rspec
-  parts = buildLocator.split('/');
+// Gather data from the pipeline object to construct a stage instance API url
+function stageInstanceUrl(pipeline) {
+  var pipeline_name = pipeline.name;
+  var pipeline_counter = pipeline._embedded.instances[0].label;
+  var stage_name = pipeline._embedded.instances[0]._embedded.stages[0].name;
+  var stage_counter = 1;
 
-  // POST /go/api/stages/:pipeline_name/:stage_name/cancel
+  return '/go/api/stages/' + pipeline_name + '/' + stage_name + '/instance/' + pipeline_counter + '/' + stage_counter
+}
+
+// Given a pipeline object, fetch the stage instance to retrieve the building
+// agent's uuid. Store the build location and stage instance api url in the
+// activeAgents hash with agent's uuid as the key
+function storeActiveAgentDetails( pipeline ) {
+  var build_locator = pipeline._embedded.instances[0]._embedded.stages[0]._links.self.href.split('/stages/')[1];
+  $.ajax({
+    dataType: "json",
+    url: server + stageInstanceUrl( pipeline ),
+    timeout: 2000
+  }).done(function(data) {
+    var agent_uuid = data.jobs[0].agent_uuid;
+    activeAgents[agent_uuid] = {buildLocator: build_locator,  stageInstanceUrl: stageInstanceUrl(pipeline) };
+  })
+}
+
+// Given a buildLocator URL, construct a URL that would cancel that stage
+// i.e. /go/api/stages/:pipeline_name/:stage_name/cancel
+function cancelUrl( buildLocator ) {
+  // buildLocator example: anonymizer/355/anonymize/1/[optional job name]
+  parts = buildLocator.split('/');
   return '/go/api/stages/' + parts[0] + '/' + parts[2] + '/cancel'
 }
 
@@ -118,26 +152,29 @@ function loadAgentData() {
   $.ajax({
     dataType: "json",
     url: server + "/go/api/agents",
-    timeout: 2000
+    timeout: 2000,
+    headers: {
+      Accept : "application/vnd.go.cd.v2+json"
+    }
   }).done(function(data) {
     $('#agents').html('');
 
-    $.each(data, function(i, agent) {
+    $.each(data._embedded.agents, function(i, agent) {
 
       agent_hash = {
-        'agent_name': agent.agent_name,
+        'agent_name': agent.hostname,
         'agent_ip_address': agent.ip_address,
-        'agent_os': agent.os,
-        'status_label_class': AGENT_STATUS_LABEL_CLASSES[agent.status],
-        'status': agent.status,
+        'agent_os': agent.operating_system,
+        'status_label_class': AGENT_STATUS_LABEL_CLASSES[agent.build_state],
+        'status': agent.build_state,
         'agent_environments': agent.environments
       }
 
-      if ( agent.status == 'Building' ) {
-        agent_hash['build_url'] = '/go/tab/build/detail/' + agent.build_locator
-        agent_hash['build_time'] = getElapsedBuildTime( agent.build_locator )
-        agent_hash['build_name'] = agent.build_locator
-        agent_hash['cancel_url'] = cancelUrl( agent.build_locator )
+      if ( agent.build_state == 'Building' && activeAgents[agent.uuid] ) {
+        agent_hash['build_url'] = '/go/pipelines/' + activeAgents[agent.uuid].buildLocator
+        agent_hash['build_time'] = getElapsedBuildTime( activeAgents[agent.uuid].stageInstanceUrl )
+        agent_hash['build_name'] = activeAgents[agent.uuid].buildLocator
+        agent_hash['cancel_url'] = cancelUrl(activeAgents[agent.uuid].buildLocator)
       }
 
       $('#agents').append( agent_template( agent_hash ));
@@ -145,27 +182,24 @@ function loadAgentData() {
   });
 }
 
-// Given a build-locator, determine the stage instance API url for this stage,
-// fetch data about the current instance, find the time that the build started.
-// Calculate the duration from build-start to now, and return a formatted string.
-function getElapsedBuildTime( buildLocator ) {
-  // buildLocator: cozy-payments-develop/145/tests/1/rspec
-  parts = buildLocator.split('/');
-  job_name = parts[4];
-
-  // /go/api/stages/:pipeline_name/:stage_name/instance/:pipeline_counter/:stage_counter
-  url = server + '/go/api/stages/' + parts[0] + '/' + parts[2] + '/instance/' + parts[1] + '/' + parts[3]
+// Given a stage instance API url, fetch data about the instance, and find the
+// time that the build started. Calculate the duration from build-start to now,
+// and return a formatted string.
+function getElapsedBuildTime( stageInstanceUrl ) {
+  if(!stageInstanceUrl) {
+    return 'unknown duration';
+  }
 
   startTime = "unknown";
 
-  $.ajax(url, {
+  $.ajax({
+    datatype: 'json',
+    url: server + stageInstanceUrl,
     async: false,
     success: function(data) {
       $.each(data.jobs, function(i, job) {
-        if ( job.name == job_name ) {
-          if ( job.job_state_transitions[3] ) {
-            startTime = job.job_state_transitions[3].state_change_time; // the 4th transition element is Preparing -> Building transition
-          }
+        if ( job.job_state_transitions[3] ) {
+          startTime = job.job_state_transitions[3].state_change_time; // the 4th transition element is Preparing -> Building transition
         }
       });
     }
@@ -227,12 +261,15 @@ function pausePipeline(url, cause) {
 // Given an URL and optional parameters, POST to that URL
 // and then reload all dynamic data.
 function postURL(url, params) {
-  $.post( url, params)
-    .done(function( data ) {
-      loadPipelineData( true );
-      loadJobData();
-      loadAgentData();
-    });
+  $.ajax({
+    type: 'POST',
+    url: url,
+    data: params,
+    headers: {confirm: true}
+  }).done(function( data ) {
+    loadPipelineAndAgenData( true );
+    loadJobData();
+  });
 }
 
 // Attach event handlers to collapsible elements, for maniplulating chevrons
@@ -267,11 +304,9 @@ $(document).ready(function(){
 
   server = config.server;
 
-  loadPipelineData( false );
-  loadAgentData();
+  loadPipelineAndAgenData( false );
   loadJobData();
-  setInterval(function() {loadPipelineData( true ); }, 5000);
-  setInterval(function() {loadAgentData(); }, 5000);
+  setInterval(function() {loadPipelineAndAgenData( true ); }, 5000);
   setInterval(function() {loadJobData(); }, 5000);
 
 });
