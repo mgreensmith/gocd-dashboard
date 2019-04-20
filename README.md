@@ -35,6 +35,26 @@ Default configuration values are sourced from `js/config.js`.
 
 - `server`: URL to your GoCD server.
 
+### Troubleshooting
+
+*Missing Content*
+
+1. First check js/config and make sure it matches your gocd front-end
+2. If still no content, in chrome you can inspect page, click console and if you see:  "chrome cross-origin has been blocked by policy"
+
+You need to enable cross-origin access from server hosting gocd web.
+Alternatively, you can proxy the requests.
+Here's an example with nginx:
+
+```
+location /go {
+	add_header Access-Control-Allow-Origin *;
+	proxy_pass http://gocd-web-server:8153/go;
+	proxy_set_header Host $host;
+}
+
+```
+
 ### Copyright
 
 Copyright (c) 2015 Matt Greensmith
